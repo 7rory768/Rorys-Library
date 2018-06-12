@@ -1,6 +1,7 @@
 package rorys.library.util;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -59,6 +60,14 @@ public class MessagingUtil {
 
     public void sendMessageAtPath(CommandSender sender, String path) {
         sender.sendMessage(this.placeholders(this.plugin.getConfig().getString(path)));
+    }
+
+    public void broadcastMessage(String msg) {
+        Bukkit.broadcastMessage(this.placeholders(msg));
+    }
+
+    public void broadcastMessageAtPath(String path) {
+        Bukkit.broadcastMessage(this.placeholders(this.plugin.getConfig().getString(path)));
     }
 
     public String placeholders(String arg) {
