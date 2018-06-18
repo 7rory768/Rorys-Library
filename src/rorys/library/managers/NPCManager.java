@@ -78,7 +78,7 @@ public class NPCManager {
             String name = npc.getName();
             String displayName = npc.getDisplayName();
             List<String> commands = npc.getCommands();
-            Location location = entityPlayer.getBukkitEntity().getLocation();
+            Location location = npc.getLocation();
 
             npcsConfigFile.set(path + "uuid", uuid.toString());
             npcsConfigFile.set(path + "name", name);
@@ -124,13 +124,15 @@ public class NPCManager {
 
         GameProfile gameProfile = new GameProfile(uuid, name);
         gameProfile.getProperties().put("textures", new Property("textures", value, signature));
+
+        for (String propertyName : gameProfile.getProperties().keySet()) {
+            Bukkit.broadcastMessage("property: " + propertyName);
+        }
+
         EntityPlayer entityPlayer = new EntityPlayer(nmsServer, nmsWorld, gameProfile, new PlayerInteractManager(nmsWorld));
-        entityPlayer.setLocation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw() + 180, loc.getPitch());
+        entityPlayer.setLocation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
 
-        entityPlayer.setCustomName(displayName);
-        entityPlayer.setCustomNameVisible(true);
-
-        NPC npc = new NPC(entityPlayer, uuid, name, value, signature, displayName);
+        NPC npc = new NPC(entityPlayer, uuid, name, value, signature, loc, displayName);
         this.npcs.add(npc);
 
         this.showNPC(npc);
@@ -146,10 +148,7 @@ public class NPCManager {
         EntityPlayer entityPlayer = new EntityPlayer(nmsServer, nmsWorld, gameProfile, new PlayerInteractManager(nmsWorld));
         entityPlayer.setLocation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
 
-        entityPlayer.setCustomName(displayName);
-        entityPlayer.setCustomNameVisible(true);
-
-        NPC npc = new NPC(entityPlayer, uuid, name, value, signature, displayName);
+        NPC npc = new NPC(entityPlayer, uuid, name, value, signature, loc, displayName);
         this.npcs.add(npc);
         Bukkit.broadcastMessage("entityPlayer id: " + entityPlayer.getId());
 
@@ -182,7 +181,7 @@ public class NPCManager {
         PlayerConnection connection = ((CraftPlayer) p).getHandle().playerConnection;
         connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entityPlayer));
         connection.sendPacket(new PacketPlayOutNamedEntitySpawn(entityPlayer));
-        connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.UPDATE_DISPLAY_NAME, entityPlayer));
+        connection.sendPacket(new PacketPlayOutEntityHeadRotation(entityPlayer, (byte) ((180.0F * 256.0F) / 360.0F)));
 
         new BukkitRunnable() {
             @Override
@@ -208,7 +207,6 @@ public class NPCManager {
     public void hideNPC(Player p, NPC npc) {
         EntityPlayer entityPlayer = npc.getEntityPlayer();
         PlayerConnection connection = ((CraftPlayer) p).getHandle().playerConnection;
-        connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entityPlayer));
         connection.sendPacket(new PacketPlayOutEntityDestroy(entityPlayer.getId()));
     }
 

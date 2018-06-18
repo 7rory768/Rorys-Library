@@ -2,6 +2,7 @@ package rorys.library.npcs;
 
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import rorys.library.util.MessagingUtil;
@@ -15,14 +16,16 @@ public class NPC {
     private EntityPlayer entityPlayer;
     private UUID uuid;
     private String name, value, signature, displayName;
+    private Location location;
     private List<String> interactCommands = new ArrayList<>();
 
-    public NPC(EntityPlayer entityPlayer, UUID uuid, String name, String value, String signature, String displayName) {
+    public NPC(EntityPlayer entityPlayer, UUID uuid, String name, String value, String signature, Location location, String displayName) {
         this.entityPlayer = entityPlayer;
         this.uuid = uuid;
         this.name = name;
         this.value = value;
         this.signature = signature;
+        this.location = location;
         this.displayName = displayName;
     }
 
@@ -92,5 +95,9 @@ public class NPC {
 
     public String getDisplayName() {
         return this.displayName;
+    }
+
+    public Location getLocation() {
+        return this.location;
     }
 }
