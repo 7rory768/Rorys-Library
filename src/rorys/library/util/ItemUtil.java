@@ -55,9 +55,11 @@ public class ItemUtil {
             List<String> enchants = this.plugin.getConfig().getStringList(path + "enchants");
             for (String enchantInfo : enchants) {
                 int colonIndex = enchantInfo.indexOf(":");
-                String enchantName = enchantInfo.substring(0, colonIndex);
-                int level = Integer.parseInt(enchantInfo.substring(colonIndex + 1, enchantInfo.length()));
-                itemMeta.addEnchant(Enchantment.getByName(enchantName), level, true);
+                Enchantment enchantment = Enchantment.getByName(enchantInfo.substring(0, colonIndex));
+                if (enchantment != null) {
+                    int level = Integer.parseInt(enchantInfo.substring(colonIndex + 1, enchantInfo.length()));
+                    itemMeta.addEnchant(enchantment, level, true);
+                }
             }
 
             List<String> itemFlags = this.plugin.getConfig().getStringList(path + "item-flags");
@@ -80,6 +82,14 @@ public class ItemUtil {
 
     public static int getSlot(int xCord, int yCord) {
         return ((yCord - 1) * 9) + xCord - 1;
+    }
+
+    public static int getX(int slot) {
+        return slot % 9 + 1;
+    }
+
+    public static int getY(int slot) {
+        return slot / 9 + 1;
     }
 
     public static ItemStack getItemStack(FileConfiguration config, String path) {
@@ -126,7 +136,7 @@ public class ItemUtil {
                 SkullMeta skullMeta = (SkullMeta) itemMeta;
                 skullMeta.setOwner(skullOwner);
                 item.setItemMeta(skullMeta);
-            } else{
+            } else {
                 item.setItemMeta(itemMeta);
             }
             return item;
