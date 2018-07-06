@@ -8,7 +8,7 @@ public class TimeUtil {
     public static int getUnitCount(String arg) {
         int count = 0;
         if (arg.length() > 1) {
-            if (IntegerCheck.isInt(arg.substring(0, arg.length() - 1))) {
+            if (NumberUtil.isInt(arg.substring(0, arg.length() - 1))) {
                 if (arg.endsWith("s")) {
                     count++;
                 } else if (arg.endsWith("m")) {
@@ -25,7 +25,7 @@ public class TimeUtil {
 
             }
         } else if (arg.length() > 2) {
-            if (arg.endsWith("mo") && IntegerCheck.isInt(arg.substring(0, arg.length() - 2))) {
+            if (arg.endsWith("mo") && NumberUtil.isInt(arg.substring(0, arg.length() - 2))) {
                 count++;
             }
         }
@@ -34,7 +34,7 @@ public class TimeUtil {
 
     public static boolean isUnitOfTime(String arg) {
         if (arg.length() > 1) {
-            if (IntegerCheck.isInt(arg.substring(0, arg.length() - 1))) {
+            if (NumberUtil.isInt(arg.substring(0, arg.length() - 1))) {
                 if (arg.endsWith("s")) {
                     return true;
                 } else if (arg.endsWith("m")) {
@@ -51,7 +51,7 @@ public class TimeUtil {
 
             }
         } else if (arg.length() > 2) {
-            if (arg.endsWith("mo") && IntegerCheck.isInt(arg.substring(0, arg.length() - 2))) {
+            if (arg.endsWith("mo") && NumberUtil.isInt(arg.substring(0, arg.length() - 2))) {
                 return true;
             }
         }
@@ -88,7 +88,7 @@ public class TimeUtil {
                     index = 0;
                     break;
                 default:
-                    if (!IntegerCheck.isInt("" + ch)) {
+                    if (!NumberUtil.isInt("" + ch)) {
                         return false;
                     }
             }
@@ -202,7 +202,7 @@ public class TimeUtil {
             char ch = time.charAt(index);
             switch (ch) {
                 case 's':
-                    if (!IntegerCheck.isInt(time.substring(0, index))) {
+                    if (!NumberUtil.isInt(time.substring(0, index))) {
                         return -1;
                     }
                     seconds += Integer.parseInt(time.substring(0, index));
@@ -214,7 +214,7 @@ public class TimeUtil {
                     }
                     break;
                 case 'm':
-                    if (!IntegerCheck.isInt(time.substring(0, index))) {
+                    if (!NumberUtil.isInt(time.substring(0, index))) {
                         return -1;
                     }
                     if (time.charAt(index + 1 >= time.length() ? index : index + 1) == 'o') {
@@ -235,7 +235,7 @@ public class TimeUtil {
                     index = 0;
                     break;
                 case 'h':
-                    if (!IntegerCheck.isInt(time.substring(0, index))) {
+                    if (!NumberUtil.isInt(time.substring(0, index))) {
                         return -1;
                     }
                     seconds += Integer.parseInt(time.substring(0, index)) * 60 * 60;
@@ -247,7 +247,7 @@ public class TimeUtil {
                     }
                     break;
                 case 'd':
-                    if (!IntegerCheck.isInt(time.substring(0, index))) {
+                    if (!NumberUtil.isInt(time.substring(0, index))) {
                         return -1;
                     }
                     seconds += Integer.parseInt(time.substring(0, index)) * 60 * 60 * 24;
@@ -259,7 +259,7 @@ public class TimeUtil {
                     }
                     break;
                 case 'w':
-                    if (!IntegerCheck.isInt(time.substring(0, index))) {
+                    if (!NumberUtil.isInt(time.substring(0, index))) {
                         return -1;
                     }
                     seconds += Integer.parseInt(time.substring(0, index)) * 60 * 60 * 24 * 7;
@@ -271,7 +271,7 @@ public class TimeUtil {
                     }
                     break;
                 case 'y':
-                    if (!IntegerCheck.isInt(time.substring(0, index))) {
+                    if (!NumberUtil.isInt(time.substring(0, index))) {
                         return -1;
                     }
                     seconds += Integer.parseInt(time.substring(0, index)) * 60 * 60 * 24 * 365;
