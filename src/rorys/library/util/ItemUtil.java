@@ -1,5 +1,7 @@
 package rorys.library.util;
 
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
@@ -9,9 +11,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by Rory on 6/30/2017.
@@ -67,11 +71,40 @@ public class ItemUtil {
                 itemMeta.addItemFlags(ItemFlag.valueOf(itemFlag));
             }
 
+            if (mat == Material.SKULL_ITEM && this.plugin.getConfig().isSet(path + "skin-value")) {
+                item.setDurability((short) 3);
+                ItemStack oldItem = item;
+                item = this.applyCustomHead(item, this.plugin.getConfig().getString(path + "skin-value"));
+                if (item == null) {
+                    item = oldItem;
+                    this.plugin.getLogger().info("[" + this.plugin.getName() + "] Failed to load skull skin-value @ " + path);
+                }
+            }
+
             item.setItemMeta(itemMeta);
             return item;
         } catch (IllegalArgumentException e) {
             return null;
         }
+    }
+
+    public ItemStack applyCustomHead(ItemStack skull, String value) {
+        String signature = "H116D5fhmj/7BVWqiRQilXmvoJO6wJzXH4Dvou6P2o9YMb+HaJT8s9+zt03GMYTipzK+NsW2D2JfzagnxLUTuiOtrCHm6V2udOM0HG0JeL4zR0Wn5oHmu+S7kUPUbt7HVlKaRXry5bobFQ06nUf7hOV3kPfpUJsfMajfabmoJ9RGMRVot3uQszjKOHQjxyAjfHP2rjeI/SktBrSscx0DzwBW9LCra7g/6Cp7/xPQTIZsqz2Otgp6i2h3YpXJPy02j4pIk0H4biR3CaU7FB0V4/D1Hvjd08giRvUpqF0a1w9rbpIWIH5GTUP8eLFdG/9SnHqMCQrTj4KkQiN0GdBO18JvJS/40LTn3ZLag5LBIa7AyyGus27N3wdIccvToQ6kHHRVpW7cUSXjircg3LOsSQbJmfLoVJ/KAF/m+de4PxIjOJIcbiOkVyQfMQltPg26VzRiu3F0qRvJNAAydH8AHdaqhkpSf6yjHqPU3p3BHFJld5o59WoD4WNkE3wOC//aTpV/f9RJ0JQko08v2mGBVKx7tpN7vHD1qD5ILzV1nDCV1/qbKgiOK9QmdXqZw9J3pM/DHtZ6eiRKni9BuGWlbWFN/qfFO2xY+J7SYFqTxBbffmvwvuF83QP5UdRTNVLYoV5S+yR5ac7fVWUZmLbq7tawyuCu0Dw24M9E1BSnpSc=";
+
+        GameProfile gameProfile = new GameProfile(UUID.randomUUID(), null);
+        gameProfile.getProperties().put("textures", new Property("textures", value, signature));
+
+        SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
+        try {
+            Field profileField = skullMeta.getClass().getDeclaredField("profile");
+            profileField.setAccessible(true);
+            profileField.set(skullMeta, gameProfile);
+        } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException exception) {
+            return null;
+        }
+
+        skull.setItemMeta(skullMeta);
+        return skull;
     }
 
     public int getSlot(String path) {
