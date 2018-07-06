@@ -3,6 +3,7 @@ package rorys.library.util;
 /**
  * Created by Rory on 6/22/2017.
  */
+@Deprecated
 public class IntegerCheck {
 
     /**
