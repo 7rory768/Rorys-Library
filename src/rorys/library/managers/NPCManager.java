@@ -5,7 +5,6 @@ import com.mojang.authlib.properties.Property;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
@@ -103,12 +102,8 @@ public class NPCManager {
         if (p != null) {
             return p.getUniqueId();
         } else {
-            OfflinePlayer offlineP = Bukkit.getOfflinePlayer(name);
-            if (offlineP != null && offlineP.hasPlayedBefore()) {
-                return offlineP.getUniqueId();
-            }
+            return SkinUtil.getUUIDFromName(name);
         }
-        return null;
     }
 
     public NPC spawnNPCWithName(Location loc, String name, String displayName) {
