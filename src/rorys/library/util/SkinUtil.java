@@ -19,7 +19,7 @@ public class SkinUtil {
             String uuidString = SkinUtil.parser.parse(reader_0).getAsJsonObject().get("id").getAsString();
             uuidString = uuidString.substring(0, 8) + "-" + uuidString.substring(8, 12) + "-" + uuidString.substring(12, 16) + "-" + uuidString.substring(16, 20) + "-" + uuidString.substring(20);
             return UUID.fromString(uuidString);
-        } catch (IOException e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -36,7 +36,7 @@ public class SkinUtil {
             args[0] = texture;
             args[1] = signature;
             return args;
-        } catch (IOException e) {
+        } catch (Exception e) {
             return null;
         }
     }
