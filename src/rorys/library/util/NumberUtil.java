@@ -1,6 +1,10 @@
 package rorys.library.util;
 
+import java.text.DecimalFormat;
+
 public class NumberUtil {
+
+    private static String[] suffixes = new String[] { "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th" };
 
     public static boolean isInt(String arg) {
         try {
@@ -79,5 +83,26 @@ public class NumberUtil {
             newBeforeDot = beforeDot.substring(0, i) + "," + newBeforeDot.substring(i, newBeforeDot.length());
         }
         return newBeforeDot;
+    }
+
+    public static String setMaxDecimals(double arg, int places) {
+        String suffix = "";
+        for (int i = 0; i < places; i++) {
+            suffix += "#";
+        }
+        DecimalFormat decimalFormat = new DecimalFormat("0." + suffix);
+        return decimalFormat.format(arg);
+    }
+
+    public static String ordinal(int i) {
+        switch (i % 100) {
+            case 11:
+            case 12:
+            case 13:
+                return i + "th";
+            default:
+                return i + suffixes[i % 10];
+
+        }
     }
 }

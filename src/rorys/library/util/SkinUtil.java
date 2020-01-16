@@ -2,6 +2,8 @@ package rorys.library.util;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -21,6 +23,20 @@ public class SkinUtil {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static String getName(UUID uuid) {
+        String name = "null";
+        OfflinePlayer player = Bukkit.getPlayer(uuid);
+        if(player != null) {
+            name = player.getName();
+        } else {
+            player = Bukkit.getOfflinePlayer(uuid);
+            if (player != null) {
+                name = player.getName();
+            }
+        }
+        return name;
     }
 
     public static String[] getValueAndSignature(UUID uuid) {

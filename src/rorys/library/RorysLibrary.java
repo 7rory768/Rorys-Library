@@ -12,6 +12,7 @@ import rorys.library.managers.NPCManager;
 import rorys.library.util.CustomConfigUtil;
 import rorys.library.util.ItemUtil;
 import rorys.library.util.MessagingUtil;
+import rorys.library.util.SignGUI;
 
 /**
  * Created by Rory on 6/22/2017.
@@ -25,6 +26,7 @@ public class RorysLibrary {
     private CustomConfig npcConfig;
 
     private ProtocolManager protocolManager;
+    private SignGUI signGUI;
 
     public RorysLibrary(JavaPlugin plugin) {
         this(plugin, false);
@@ -46,6 +48,10 @@ public class RorysLibrary {
                 pluginManager.registerEvents(new NPCInteractListener(this.plugin, this.npcManager, this.protocolManager), this.plugin);
                 pluginManager.registerEvents(new PlayerJoinListener(this.plugin, this.npcManager), this.plugin);
                 pluginManager.registerEvents(new PlayerQuitListener(this.plugin, this.npcManager), this.plugin);
+                
+                if (pluginManager.getPlugin("PacketWrapper") != null && pluginManager.getPlugin("PacketWrapper").isEnabled()) {
+                    this.signGUI = new SignGUI(this.plugin);
+                }
             }
         }
     }

@@ -21,6 +21,7 @@ public class TimeUtil {
     private static String months = "months";
     private static String year = "year";
     private static String years = "years";
+    private static String and = "and";
 
     public static void refreshUnitStrings(FileConfiguration config, String path) {
         TimeUtil.setSecond(config.getString(path + "second", "second"));
@@ -37,6 +38,7 @@ public class TimeUtil {
         TimeUtil.setMonths(config.getString(path + "months", "months"));
         TimeUtil.setYear(config.getString(path + "year", "year"));
         TimeUtil.setYears(config.getString(path + "years", "years"));
+        TimeUtil.setAnd(config.getString(path + "and", "and"));
     }
 
     public static void setSecond(String second) {
@@ -93,6 +95,10 @@ public class TimeUtil {
 
     public static void setYears(String years) {
         TimeUtil.years = years;
+    }
+
+    public static void setAnd(String and) {
+        TimeUtil.and = and;
     }
 
     public static int getUnitCount(String arg) {
@@ -273,10 +279,10 @@ public class TimeUtil {
             timeText = timeText.substring(0, timeText.length() - 2);
             int lastComma = timeText.lastIndexOf(",");
             if (lastComma != -1) {
-                timeText = timeText.substring(0, lastComma) + " and " + timeText.substring(lastComma + 2, timeText.length());
+                timeText = timeText.substring(0, lastComma) + " " + TimeUtil.and + " " + timeText.substring(lastComma + 2, timeText.length());
             }
         } else {
-            timeText = "0 seconds";
+            timeText = "0 " + TimeUtil.seconds;
         }
         return timeText;
     }
