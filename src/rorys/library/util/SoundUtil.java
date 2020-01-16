@@ -12,7 +12,7 @@ public class SoundUtil {
 		}
 		
 		try {
-			player.playSound(player.getLocation(), Sound.valueOf(config.getString(path + "sound")), Float.valueOf(config.getString(path + "volume")), Float.valueOf(config.getString(path + "pitch")));
+			player.playSound(player.getLocation(), Sound.valueOf(config.getString(path + "sound")), Float.valueOf(config.getString(path + "volume", "1.0")), Float.valueOf(config.getString(path + "pitch", "0.5")));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
