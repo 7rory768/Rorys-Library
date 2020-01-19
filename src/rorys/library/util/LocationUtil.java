@@ -30,7 +30,7 @@ public class LocationUtil {
     }
 
     public static Location fromPath(FileConfiguration config, String path) {
-        if (path.endsWith(".")) {
+        if (!path.endsWith(".")) {
             path += ".";
         }
 
