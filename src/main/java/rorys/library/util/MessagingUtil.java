@@ -18,7 +18,11 @@ public class MessagingUtil {
         this.plugin = plugin;
         this.reload();
     }
-    
+
+    public JavaPlugin getPlugin() {
+        return plugin;
+    }
+
     public static String format(String arg) {
         return StringEscapeUtils.unescapeJava(ChatColor.translateAlternateColorCodes('&', arg));
     }

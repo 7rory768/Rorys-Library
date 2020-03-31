@@ -1,9 +1,12 @@
 package rorys.library.util;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.util.Vector;
+
+import java.util.Random;
 
 /**
  * Created by Rory on 6/25/2017.
@@ -45,4 +48,40 @@ public class LocationUtil {
         }
         return new Location(world, x, y, z);
     }
+    
+    public static Location getRandomHighestLocationWithinBorder(World world) {
+        WorldBorder worldBorder = world.getWorldBorder();
+        int size = (int) worldBorder.getSize();
+        Location center = worldBorder.getCenter();
+        int minX = (center.getBlockX() - (size / 2)) + 1, minZ = (center.getBlockZ() - (size / 2)) + 1;
+        int maxX = (minX + size) - 1, maxZ = (minZ + size) - 1;
+        Random random = new Random();
+        int randomX = minX + random.nextInt(maxX - minX), randomZ = minZ + random.nextInt(maxZ - minZ);
+        Location loc = new Location(world, randomX, 0, randomZ);
+        Block block = world.getHighestBlockAt(loc);
+        Block lowerBlock = block.getRelative(BlockFace.DOWN);
+        if (lowerBlock.getType() == Material.WATER || lowerBlock.getType() == Material.LAVA) {
+            return getRandomHighestLocationWithinBorder(world);
+        }
+        return block.getLocation();
+    }
+    
+    public static Vector getVector(Location origin, Location target, double length) {
+        Vector vec = target.toVector().subtract(origin.toVector());
+        return vec.normalize().multiply(length);
+    }
+    
+    public static String getEnvironmentString(World.Environment environment) {
+        switch (environment) {
+            case NETHER:
+                return "Nether";
+            case NORMAL:
+                return "Overworld";
+            case THE_END:
+                return "End";
+        }
+        
+        return "";
+    }
+    
 }

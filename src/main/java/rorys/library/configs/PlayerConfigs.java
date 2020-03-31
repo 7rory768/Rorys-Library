@@ -72,4 +72,13 @@ public class PlayerConfigs {
         }
     }
 
+    public void deleteConfig(Player p) {
+        deleteConfig(p.getUniqueId());
+    }
+
+    public void deleteConfig(UUID uuid) {
+        getConfig(uuid);
+        playerFiles.get(uuid).delete();
+    }
+
 }

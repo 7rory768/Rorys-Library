@@ -26,15 +26,13 @@ import java.util.UUID;
  * Created by Rory on 6/30/2017.
  */
 public class ItemUtil {
-    
+
     private JavaPlugin plugin;
-    private MessagingUtil messagingUtil;
-    
-    public ItemUtil(JavaPlugin plugin, MessagingUtil messagingUtil) {
+
+    public ItemUtil(JavaPlugin plugin) {
         this.plugin = plugin;
-        this.messagingUtil = messagingUtil;
     }
-    
+
     public static int getInventorySpace(Inventory inventory, ItemStack item) {
         int space = 0;
         int itemSize = item.getAmount();
@@ -45,7 +43,7 @@ public class ItemUtil {
             } else if (invItem.isSimilar(item)) {
                 space += Math.min(invItem.getMaxStackSize() - invItem.getAmount(), itemSize);
             }
-            
+
             if (space >= itemSize) {
                 space = itemSize;
                 break;
@@ -53,13 +51,13 @@ public class ItemUtil {
         }
         return space;
     }
-    
+
     public ItemStack getItemStack(String path) {
         return ItemUtil.getItemStack(this.plugin.getConfig(), path);
     }
-    
+
     public static ItemStack getItemStack(FileConfiguration config, String path) {
-        ItemStack item = null;
+        ItemStack item;
         if (!path.endsWith(".")) {
             path += ".";
         }
@@ -74,16 +72,16 @@ public class ItemUtil {
             if (!name.equals("")) {
                 itemMeta.setDisplayName(MessagingUtil.format(name));
             }
-            
+
             List<String> loreLines = config.getStringList(path + "lore");
             if (!loreLines.isEmpty()) {
-                List<String> lore = new ArrayList<String>();
+                List<String> lore = new ArrayList<>();
                 for (String loreLine : loreLines) {
                     lore.add(MessagingUtil.format(loreLine));
                 }
                 itemMeta.setLore(lore);
             }
-            
+
             List<String> enchants = config.getStringList(path + "enchants");
             for (String enchantInfo : enchants) {
                 int colonIndex = enchantInfo.indexOf(":");
@@ -93,41 +91,43 @@ public class ItemUtil {
                     itemMeta.addEnchant(enchantment, level, true);
                 }
             }
-            
+
             List<String> itemFlags = config.getStringList(path + "item-flags");
             for (String itemFlag : itemFlags) {
                 itemMeta.addItemFlags(ItemFlag.valueOf(itemFlag));
             }
-            
-            if (mat == Material.SKULL_ITEM && config.isSet(path + "skin-value")) {
-                item.setDurability((short) 3);
+
+            if ((mat.name().equals("PLAYER_HEAD") || mat.name().equals("SKULL_ITEM")) && config.isSet(path + "skin-value")) {
+                if (mat.name().equals("SKULL_ITEM")) {
+                    item.setDurability((short) 3);
+                }
                 ItemMeta oldItemMeta = itemMeta;
                 itemMeta = ItemUtil.applyCustomHead(itemMeta, config.getString(path + "skin-value"));
                 if (itemMeta == null) {
                     itemMeta = oldItemMeta;
-                    String pluginName = ChatColor.stripColor(MessagingUtil.format(config.getString("prefix", "ItemUtil 1").split("\\s")[0]));
+                    String pluginName = ChatColor.stripColor(MessagingUtil.format(config.getString("prefix", "ItemUtil").split("\\s")[0]));
                     Bukkit.getLogger().info("[" + pluginName + "] Failed to load skull skin-value @ " + path);
                 }
             }
-            
+
             if ((mat == Material.LEATHER_BOOTS || mat == Material.LEATHER_CHESTPLATE || mat == Material.LEATHER_HELMET || mat == Material.LEATHER_LEGGINGS) && config.isSet(path + "color")) {
                 LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) itemMeta;
                 leatherArmorMeta.setColor(Color.fromRGB(config.getInt(path + "color")));
                 itemMeta = leatherArmorMeta;
             }
-            
+
             item.setItemMeta(itemMeta);
-            
+
             return item;
         } catch (IllegalArgumentException e) {
             return null;
         }
     }
-    
+
     public static SkullMeta applyCustomHead(ItemMeta itemMeta, String value) {
         GameProfile gameProfile = new GameProfile(UUID.randomUUID(), null);
         gameProfile.getProperties().put("textures", new Property("textures", value));
-        
+
         SkullMeta skullMeta = (SkullMeta) itemMeta;
         try {
             Field profileField = skullMeta.getClass().getDeclaredField("profile");
@@ -136,25 +136,25 @@ public class ItemUtil {
         } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException exception) {
             return null;
         }
-        
+
         return skullMeta;
     }
-    
+
     public static SkullMeta applyCustomHead(ItemMeta itemMeta, UUID uuid) {
         SkullMeta skullMeta = (SkullMeta) itemMeta;
         skullMeta.setOwner(SkinUtil.getName(uuid));
         return skullMeta;
     }
-    
+
     public int getSlot(String path) {
         return ItemUtil.getSlot(this.plugin.getConfig(), path);
     }
-    
+
     public static int getSlot(FileConfiguration config, String path) {
         if (!path.endsWith(".")) {
             path += ".";
         }
-        
+
         int xCord = config.getInt(path + "x-cord", -1);
         int yCord = config.getInt(path + "y-cord" , -1);
         if (xCord == -1 || yCord == -1) {
@@ -162,30 +162,30 @@ public class ItemUtil {
         }
         return ItemUtil.getSlot(xCord, yCord);
     }
-    
+
     public static int getSlot(int xCord, int yCord) {
         return ((yCord - 1) * 9) + xCord - 1;
     }
-    
+
     public static int getX(int slot) {
         return slot % 9 + 1;
     }
-    
+
     public static int getY(int slot) {
         return slot / 9 + 1;
     }
-    
+
     public static boolean itemIsReal(ItemStack item) {
         return item != null && item.getType() != Material.AIR;
     }
-    
+
     public static void addDurabilityGlow(ItemStack item) {
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.addEnchant(Enchantment.DURABILITY, 3, true);
         itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         item.setItemMeta(itemMeta);
     }
-    
+
     public static void storeItemStack(ItemStack item, FileConfiguration config, String path) {
         if (!path.endsWith(".")) {
             path += ".";
@@ -193,26 +193,26 @@ public class ItemUtil {
         config.set(path + "material", item.getType().name());
         config.set(path + "amount", item.getAmount());
         config.set(path + "data", item.getDurability());
-        
+
         ItemMeta itemMeta = item.getItemMeta();
-        
+
         if (itemMeta.hasDisplayName()) {
             config.set(path + "name", itemMeta.getDisplayName());
         }
-        
+
         if (itemMeta.hasLore()) {
             config.set(path + "lore", itemMeta.getLore());
         }
-        
+
         if (itemMeta.hasEnchants()) {
             List<String> enchants = new ArrayList<String>();
             for (Map.Entry<Enchantment, Integer> enchant : itemMeta.getEnchants().entrySet()) {
                 enchants.add(enchant.getKey().getName() + ":" + enchant.getValue());
                 config.set(path + "enchants", enchants);
-                
+
             }
         }
-        
+
         List<String> itemFlags = new ArrayList<>();
         for (ItemFlag itemFlag : itemMeta.getItemFlags()) {
             itemFlags.add(itemFlag.name());
@@ -220,11 +220,34 @@ public class ItemUtil {
         if (!itemFlags.isEmpty()) {
             config.set(path + "item-flags", itemFlags);
         }
-        
-        if (item.getType() == Material.SKULL_ITEM && item.getDurability() == 3) {
+
+        if ((item.getType().name().equals("SKULL_ITEM") || item.getType().name().equals("PLAYER_HEAD"))) {
             SkullMeta skullMeta = (SkullMeta) itemMeta;
             config.set(path + "skull-owner", skullMeta.getOwner());
         }
     }
-    
+
+    public static boolean isSimilar(ItemStack o, ItemStack o1) {
+        try {
+            if ((o == null && o1 != null) || (o != null && o1 == null)) {
+                return false;
+            }
+            if (o != null) {
+                return o.isSimilar(o1);
+            }
+        } catch (Exception e) {
+
+            if (o.getType() != o1.getType() || o.getDurability() != o1.getDurability()) {
+                return false;
+            }
+
+            ItemMeta oMeta = o.getItemMeta(), o1Meta = o1.getItemMeta();
+
+            if (oMeta.hasDisplayName() != o1Meta.hasDisplayName() || (oMeta.hasDisplayName() && !oMeta.getDisplayName().equals(o1Meta.getDisplayName())) || oMeta.hasLore() != o1Meta.hasLore() || (oMeta.hasLore() && !oMeta.getLore().equals(o1Meta.getLore()))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }
