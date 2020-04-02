@@ -10,12 +10,21 @@ public class SoundUtil {
 		if (!path.endsWith(".")) {
 			path += ".";
 		}
-		
+
+		Sound sound = null;
+		String soundString = config.getString(path + "sound").toUpperCase();
 		try {
-			player.playSound(player.getLocation(), Sound.valueOf(config.getString(path + "sound")), Float.valueOf(config.getString(path + "volume", "1.0")), Float.valueOf(config.getString(path + "pitch", "0.5")));
-		} catch (Exception e) {
-			e.printStackTrace();
+			sound = Sound.valueOf(soundString);
+		} catch (IllegalArgumentException e) {
+			if (soundString.equals("BLOCK_NOTE_BLOCK_PLING")) {
+				sound = Sound.valueOf("NOTE_PLING");
+			} else if (soundString.equals("ENTITY_PLAYER_LEVELUP")) {
+				sound = Sound.valueOf("LEVEL_UP");
+			} else if (soundString.equals("BLOCK_ANVIL_PLACE")) {
+				sound = Sound.valueOf("ANVIL_LAND");
+			}
 		}
+		player.playSound(player.getLocation(), sound, Float.valueOf(config.getString(path + "volume", "1.0")), Float.valueOf(config.getString(path + "pitch", "1.0")));
 	}
 	
 }
