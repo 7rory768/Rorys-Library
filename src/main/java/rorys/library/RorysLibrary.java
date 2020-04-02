@@ -1,7 +1,6 @@
 package rorys.library;
 
 import org.bukkit.plugin.java.JavaPlugin;
-import rorys.library.configs.CustomConfig;
 import rorys.library.util.ItemUtil;
 import rorys.library.util.MessagingUtil;
 
@@ -13,7 +12,6 @@ public class RorysLibrary {
     private final JavaPlugin plugin;
     private final MessagingUtil messagingUtil;
     private final ItemUtil itemUtil;
-    private CustomConfig npcConfig;
 
     public RorysLibrary(JavaPlugin plugin) {
         this.plugin = plugin;
