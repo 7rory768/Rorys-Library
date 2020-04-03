@@ -177,6 +177,10 @@ public class ItemUtil {
 		}
 	}
 
+	public JavaPlugin getPlugin() {
+		return plugin;
+	}
+
 	public ItemStack getItemStack(String path) {
 		return ItemUtil.getItemStack(this.plugin.getConfig(), path);
 	}
