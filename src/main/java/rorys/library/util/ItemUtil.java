@@ -70,6 +70,15 @@ public class ItemUtil {
 		return true;
 	}
 
+	public static boolean fullInventory(Inventory inventory) {
+		for (ItemStack item : inventory.getContents()) {
+			if (item == null || item.getType() == Material.AIR) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public static int getInventorySpace(Inventory inventory, ItemStack item) {
 		int space    = 0;
 		int itemSize = item.getAmount();
@@ -159,7 +168,6 @@ public class ItemUtil {
 			for (Map.Entry<Enchantment, Integer> enchant : itemMeta.getEnchants().entrySet()) {
 				enchants.add(enchant.getKey().getName() + ":" + enchant.getValue());
 				config.set(path + "enchants", enchants);
-
 			}
 		}
 
