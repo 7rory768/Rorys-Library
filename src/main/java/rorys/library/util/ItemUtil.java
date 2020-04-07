@@ -71,7 +71,7 @@ public class ItemUtil {
 	}
 
 	public static boolean fullInventory(Inventory inventory) {
-		for (ItemStack item : inventory.getContents()) {
+		for (ItemStack item : inventory.getStorageContents()) {
 			if (item == null || item.getType() == Material.AIR) {
 				return false;
 			}
