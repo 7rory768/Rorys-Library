@@ -18,7 +18,7 @@ public class LocationUtil {
         String[] args = string.split("\\|");
         Location loc = new Location(Bukkit.getWorld(args[0]), Double.valueOf(args[1]), Double.valueOf(args[2]), Double.valueOf(args[3]));
         if (args.length > 4) {
-            loc.setPitch(Float.valueOf(args[4]));
+            loc.setYaw(Float.valueOf(args[4]));
             loc.setPitch(Float.valueOf(args[5]));
         }
         return loc;
@@ -29,7 +29,7 @@ public class LocationUtil {
     }
 
     public static String toString(Location loc) {
-        return (loc.getWorld().getName() + "|" + loc.getX() + "|" + loc.getY() + "|" + loc.getZ() + "|" + loc.getPitch() + "|" + loc.getYaw()).replace('.', ',');
+        return (loc.getWorld().getName() + "|" + loc.getX() + "|" + loc.getY() + "|" + loc.getZ() + "|" + loc.getYaw() + "|" + loc.getPitch()).replace('.', ',');
     }
 
     public static Location fromPath(FileConfiguration config, String path) {
