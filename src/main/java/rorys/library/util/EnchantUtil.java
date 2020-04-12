@@ -12,15 +12,51 @@ public class EnchantUtil {
 	private static String i[] = {"", "I", "II", "III", "IV", "V",
 	                             "VI", "VII", "VIII", "IX"};
 
-	public static String getNiceName(Enchantment enchantment) {
-		String name = "";
-
-		for (String arg : enchantment.getKey().toString().substring(10).split("_")) {
-			name += arg.substring(0, 1).toUpperCase() + arg.substring(1) + " ";
+	public String getNiceName(Enchantment enchantment)
+	{
+		String name = enchantment.getName();
+		switch (name) {
+			case "ARROW_DAMAGE": return "Power";
+			case "ARROW_FIRE": return "Flame";
+			case "ARROW_INFINITE": return "Infinity";
+			case "ARROW_KNOCKBACK": return "Punch";
+			case "BINDING_CURSE": return "§cCurse of Binding";
+			case "CHANNELING": return "Chanelling";
+			case "DAMAGE_ALL": return "Sharpness";
+			case "DAMAGE_ARTHROPODS": return "Bane of Arthropods";
+			case "DAMAGE_UNDEAD": return "Smite";
+			case "DEPTH_STRIDER": return "Depth Strider";
+			case "DIG_SPEED": return "Efficiency";
+			case "DURABILITY": return "Durability";
+			case "FIRE_ASPECT": return "Fire Aspect";
+			case "FROST_WALKER": return "Frost Walker";
+			case "IMPALING": return "Impaling";
+			case "KNOCKBACK": return "Knockback";
+			case "LOOT_BONUS_BLOCKS": return "Fortune";
+			case "LOOT_BONUS_MOBS": return "Looting";
+			case "LOYALTY": return "Loyalty";
+			case "LUCK": return "Luck";
+			case "LURE": return "Lure";
+			case "MENDING": return "Mending";
+			case "MULTISHOT": return "Multishot";
+			case "OXYGEN": return "Respiration";
+			case "PIERCING": return "Piercing";
+			case "PROTECTION_ENVIRONMENTAL": return "Protection";
+			case "PROTECTION_EXPLOSIONS": return "Blast Protection";
+			case "PROTECTION_FALL": return "Feather Falling";
+			case "PROTECTION_PROJECTILE": return "Projectile Protection";
+			case "QUICK_CHARGE": return "Quick Charge";
+			case "RIPTIDE": return "Riptide";
+			case "SILK_TOUCH": return "Silk Touch";
+			case "SWEEPING_EDGE": return "Sweeping_Edge";
+			case "THORNS": return "Thorns";
+			case "VANISHING_CURSE": return "§cCurse of Vanishing";
+			case "WATER_WORKER": return "Water Worker";
 		}
 
-		return name.trim();
+		return "Unknown Enchant";
 	}
+
 
 	static String intToRoman(int num) {
 		try {
