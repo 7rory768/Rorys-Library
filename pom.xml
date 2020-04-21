@@ -6,7 +6,7 @@
 
     <groupId>org.plugins.roryslibrary</groupId>
     <artifactId>RorysLibrary</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
 
     <name>RorysLibrary</name>

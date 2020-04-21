@@ -91,7 +91,23 @@ public class MessagingUtil {
     public void sendMessageAtPath(CommandSender sender, String path) {
         sender.sendMessage(this.placeholders(this.plugin.getConfig().getString(path)));
     }
-    
+
+    public void sendNoPermissionMessage(CommandSender sender) {
+        if (plugin.getConfig().isSet("messages.no-permission")) {
+            sendMessageAtPath(sender, "messages.no-permission");
+        } else {
+            sendMessage(sender, "&cYou don't have permission for that");
+        }
+    }
+
+    public void sendConfigReloadedMessage(CommandSender sender) {
+        if (plugin.getConfig().isSet("messages.config-reloaded")) {
+            sendMessageAtPath(sender, "messages.config-reloaded");
+        } else {
+            sendMessage(sender, "{PREFIX}Configuration file reloaded successfully");
+        }
+    }
+
     public void broadcastMessage(String msg) {
         Bukkit.broadcastMessage(this.placeholders(msg));
     }
