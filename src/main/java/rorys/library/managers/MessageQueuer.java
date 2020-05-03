@@ -6,6 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import rorys.library.configs.PlayerConfigs;
 import rorys.library.util.MessagingUtil;
 
@@ -13,11 +14,13 @@ import java.util.List;
 import java.util.UUID;
 
 public class MessageQueuer implements Listener {
-    
+
+    private final JavaPlugin plugin;
     private final PlayerConfigs playerConfigs;
     private final MessagingUtil messagingUtil;
     
     public MessageQueuer(JavaPlugin plugin, PlayerConfigs playerConfigs, MessagingUtil messagingUtil) {
+        this.plugin = plugin;
         this.playerConfigs = playerConfigs;
         this.messagingUtil = messagingUtil;
         
@@ -49,7 +52,12 @@ public class MessageQueuer implements Listener {
     
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        this.sendQueuedMessages(e.getPlayer());
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                sendQueuedMessages(e.getPlayer());
+            }
+        }.runTaskLaterAsynchronously(plugin, 5L);
     }
     
 }
