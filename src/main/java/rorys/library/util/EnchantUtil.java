@@ -44,6 +44,7 @@ public class EnchantUtil {
 			case "PROTECTION_ENVIRONMENTAL": return "Protection";
 			case "PROTECTION_EXPLOSIONS": return "Blast Protection";
 			case "PROTECTION_FALL": return "Feather Falling";
+			case "PROTECTION_FIRE": return "Fire Protection";
 			case "PROTECTION_PROJECTILE": return "Projectile Protection";
 			case "QUICK_CHARGE": return "Quick Charge";
 			case "RIPTIDE": return "Riptide";
