@@ -9,29 +9,31 @@ public class NumberUtil {
 
     private static String[] suffixes = new String[] { "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th" };
 
-    private static final NavigableMap<Long, String> moneySuffixes = new TreeMap<>();
+    private static final NavigableMap<Double, String> moneySuffixes = new TreeMap<>();
     static {
-        moneySuffixes.put(1_000L, "k");
-        moneySuffixes.put(1_000_000L, "M");
-        moneySuffixes.put(1_000_000_000L, "B");
-        moneySuffixes.put(1_000_000_000_000L, "T");
-        moneySuffixes.put(1_000_000_000_000_000L, "Q");
-        moneySuffixes.put(1_000_000_000_000_000_000L, "P");
+        moneySuffixes.put(1_000d, "k");
+        moneySuffixes.put(1_000_000d, "M");
+        moneySuffixes.put(1_000_000_000d, "B");
+        moneySuffixes.put(1_000_000_000_000d, "T");
+        moneySuffixes.put(1_000_000_000_000_000d, "Q");
+        moneySuffixes.put(1_000_000_000_000_000_000d, "P");
+        moneySuffixes.put(1_000_000_000_000_000_000_000d, "E");
+        moneySuffixes.put(1_000_000_000_000_000_000_000_000d, "Z");
     }
 
-    public static String beautify(long value) {
+    public static String beautify(double value) {
         //Long.MIN_VALUE == -Long.MIN_VALUE so we need an adjustment here
-        if (value == Long.MIN_VALUE) return beautify(Long.MIN_VALUE + 1);
+        if (value == Double.MIN_VALUE) return beautify(Double.MIN_VALUE + 1);
         if (value < 0) return "-" + beautify(-value);
-        if (value < 1000) return Long.toString(value); //deal with easy case
+        if (value < 1000) return Double.toString(value); //deal with easy case
 
-        Map.Entry<Long, String> e        = moneySuffixes.floorEntry(value);
-        Long                    divideBy = e.getKey();
+        Map.Entry<Double, String> e = moneySuffixes.floorEntry(value);
+        Double divideBy = e.getKey();
         String suffix = e.getValue();
 
-        long truncated = value / (divideBy / 10); //the number part of the output times 10
+        double truncated = value / (divideBy / 10); //the number part of the output times 10
         boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
-        return hasDecimal ? (truncated / 10d) + suffix : (truncated / 10) + suffix;
+        return hasDecimal ? NumberUtil.setMaxDecimals((truncated / 10d), 1) + suffix : NumberUtil.setMaxDecimals((truncated / 10), 1) + suffix;
     }
 
     public static boolean isInt(String arg) {
