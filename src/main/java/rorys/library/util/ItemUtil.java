@@ -33,6 +33,167 @@ public class ItemUtil {
 		this.plugin = plugin;
 	}
 
+	public ItemStack getItemStack(String path) {
+		return ItemUtil.getItemStack(this.plugin.getConfig(), path);
+	}
+
+	public static ItemStack getItemStack(JavaPlugin plugin, String path) {
+		return getItemStack(plugin.getConfig(), path);
+	}
+
+	public static ItemStack getItemStack(FileConfiguration config, String path) {
+		ItemStack item;
+		if (!path.endsWith(".")) {
+			path += ".";
+		}
+		Material mat;
+		String   matString = config.getString(path + "material", "NULL").toUpperCase();
+		try {
+			mat = Material.valueOf(matString);
+		} catch (IllegalArgumentException e) {
+			// Allow compatibility for < 1.13 configs
+			if (matString.equals("PLAYER_HEAD")) {
+				mat = Material.valueOf("SKULL_ITEM");
+			} else if (matString.equalsIgnoreCase("GRAY_STAINED_GLASS_PANE")) {
+				mat = Material.valueOf("STAINED_GLASS_PANE");
+			} else {
+				String pluginName = ChatColor.stripColor(MessagingUtil.format(config.getString("prefix", "ItemUtil").split("\\s")[0]));
+				Bukkit.getLogger().info("[" + pluginName + "] Invalid material '" + matString + "' @ " + path);
+				return null;
+			}
+		}
+		int amount = config.getInt(path + "amount", 1);
+		item = new ItemStack(mat, amount);
+		short data = (short) config.getInt(path + "data", item.getDurability());
+
+		// Allow compatibility for < 1.13 configs
+		if (matString.equals("GRAY_STAINED_GLASS_PANE")) {
+			data = (short) 7;
+		}
+
+		item.setDurability(data);
+		ItemMeta itemMeta = item.getItemMeta();
+		String   name     = config.getString(path + "name", "");
+		if (!name.equals("")) {
+			itemMeta.setDisplayName(MessagingUtil.format(name));
+		}
+
+		List<String> loreLines = config.getStringList(path + "lore");
+		if (!loreLines.isEmpty()) {
+			List<String> lore = new ArrayList<>();
+			for (String loreLine : loreLines) {
+				lore.add(MessagingUtil.format(loreLine));
+			}
+			itemMeta.setLore(lore);
+		}
+
+		List<String> enchants = config.getStringList(path + "enchants");
+		for (String enchantInfo : enchants) {
+			int         colonIndex  = enchantInfo.indexOf(":");
+			Enchantment enchantment = Enchantment.getByName(enchantInfo.substring(0, colonIndex));
+			if (enchantment != null) {
+				int level = Integer.parseInt(enchantInfo.substring(colonIndex + 1, enchantInfo.length()));
+				itemMeta.addEnchant(enchantment, level, true);
+			}
+		}
+
+		List<String> itemFlags = config.getStringList(path + "item-flags");
+		for (String itemFlag : itemFlags) {
+			itemMeta.addItemFlags(ItemFlag.valueOf(itemFlag));
+		}
+
+		if ((mat.name().equals("PLAYER_HEAD") || mat.name().equals("SKULL_ITEM"))) {
+			if (mat.name().equals("SKULL_ITEM") && !config.isSet(path + "data")) {
+				item.setDurability((short) 3);
+			}
+			if (config.isSet(path + "skin-value")) {
+				ItemMeta oldItemMeta = itemMeta;
+				itemMeta = ItemUtil.applyCustomHead(itemMeta, config.getString(path + "skin-value"));
+				if (itemMeta == null) {
+					itemMeta = oldItemMeta;
+					String pluginName = ChatColor.stripColor(MessagingUtil.format(config.getString("prefix", "ItemUtil").split("\\s")[0]));
+					Bukkit.getLogger().info("[" + pluginName + "] Failed to load skull skin-value @ " + path);
+				}
+			}
+		}
+
+		if ((mat == Material.LEATHER_BOOTS || mat == Material.LEATHER_CHESTPLATE || mat == Material.LEATHER_HELMET || mat == Material.LEATHER_LEGGINGS) && config.isSet(path + "color")) {
+			LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) itemMeta;
+			leatherArmorMeta.setColor(Color.fromRGB(config.getInt(path + "color")));
+			itemMeta = leatherArmorMeta;
+		}
+
+		item.setItemMeta(itemMeta);
+
+		return item;
+	}
+
+	public static void storeItemStack(ItemStack item, JavaPlugin plugin, String path) {
+		storeItemStack(item, plugin.getConfig(), path);
+	}
+
+	public static void storeItemStack(ItemStack item, FileConfiguration config, String path) {
+		if (!path.endsWith(".")) {
+			path += ".";
+		}
+		config.set(path + "material", item.getType().name());
+		config.set(path + "amount", item.getAmount());
+		config.set(path + "data", item.getDurability());
+
+		ItemMeta itemMeta = item.getItemMeta();
+
+		if (itemMeta.hasDisplayName()) {
+			config.set(path + "name", itemMeta.getDisplayName());
+		}
+
+		if (itemMeta.hasLore()) {
+			config.set(path + "lore", itemMeta.getLore());
+		}
+
+		if (itemMeta.hasEnchants()) {
+			List<String> enchants = new ArrayList<String>();
+			for (Map.Entry<Enchantment, Integer> enchant : itemMeta.getEnchants().entrySet()) {
+				enchants.add(enchant.getKey().getName() + ":" + enchant.getValue());
+				config.set(path + "enchants", enchants);
+			}
+		}
+
+		List<String> itemFlags = new ArrayList<>();
+		for (ItemFlag itemFlag : itemMeta.getItemFlags()) {
+			itemFlags.add(itemFlag.name());
+		}
+		if (!itemFlags.isEmpty()) {
+			config.set(path + "item-flags", itemFlags);
+		}
+
+		if ((item.getType().name().equals("SKULL_ITEM") || item.getType().name().equals("PLAYER_HEAD"))) {
+			SkullMeta skullMeta = (SkullMeta) itemMeta;
+			config.set(path + "skull-owner", skullMeta.getOwner());
+		}
+	}
+
+	public JavaPlugin getPlugin() {
+		return plugin;
+	}
+
+	public static SkullMeta applyCustomHead(ItemMeta itemMeta, String value) {
+		GameProfile gameProfile = new GameProfile(UUID.randomUUID(), null);
+		gameProfile.getProperties().put("textures", new Property("textures", value));
+
+		SkullMeta skullMeta = (SkullMeta) itemMeta;
+		try {
+			Field profileField = skullMeta.getClass().getDeclaredField("profile");
+			profileField.setAccessible(true);
+			profileField.set(skullMeta, gameProfile);
+		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException exception) {
+			return null;
+		}
+
+		return skullMeta;
+	}
+
+
+
 	public static int getX(int slot) {
 		return slot % 9 + 1;
 	}
@@ -143,157 +304,6 @@ public class ItemUtil {
 
 		item.setItemMeta(itemMeta);
 		return item;
-	}
-
-	public static void storeItemStack(ItemStack item, FileConfiguration config, String path) {
-		if (!path.endsWith(".")) {
-			path += ".";
-		}
-		config.set(path + "material", item.getType().name());
-		config.set(path + "amount", item.getAmount());
-		config.set(path + "data", item.getDurability());
-
-		ItemMeta itemMeta = item.getItemMeta();
-
-		if (itemMeta.hasDisplayName()) {
-			config.set(path + "name", itemMeta.getDisplayName());
-		}
-
-		if (itemMeta.hasLore()) {
-			config.set(path + "lore", itemMeta.getLore());
-		}
-
-		if (itemMeta.hasEnchants()) {
-			List<String> enchants = new ArrayList<String>();
-			for (Map.Entry<Enchantment, Integer> enchant : itemMeta.getEnchants().entrySet()) {
-				enchants.add(enchant.getKey().getName() + ":" + enchant.getValue());
-				config.set(path + "enchants", enchants);
-			}
-		}
-
-		List<String> itemFlags = new ArrayList<>();
-		for (ItemFlag itemFlag : itemMeta.getItemFlags()) {
-			itemFlags.add(itemFlag.name());
-		}
-		if (!itemFlags.isEmpty()) {
-			config.set(path + "item-flags", itemFlags);
-		}
-
-		if ((item.getType().name().equals("SKULL_ITEM") || item.getType().name().equals("PLAYER_HEAD"))) {
-			SkullMeta skullMeta = (SkullMeta) itemMeta;
-			config.set(path + "skull-owner", skullMeta.getOwner());
-		}
-	}
-
-	public JavaPlugin getPlugin() {
-		return plugin;
-	}
-
-	public ItemStack getItemStack(String path) {
-		return ItemUtil.getItemStack(this.plugin.getConfig(), path);
-	}
-
-	public static ItemStack getItemStack(FileConfiguration config, String path) {
-		ItemStack item;
-		if (!path.endsWith(".")) {
-			path += ".";
-		}
-		Material mat;
-		String   matString = config.getString(path + "material", "NULL").toUpperCase();
-		try {
-			mat = Material.valueOf(matString);
-		} catch (IllegalArgumentException e) {
-			// Allow compatibility for < 1.13 configs
-			if (matString.equals("PLAYER_HEAD")) {
-				mat = Material.valueOf("SKULL_ITEM");
-			} else if (matString.equalsIgnoreCase("GRAY_STAINED_GLASS_PANE")) {
-				mat = Material.valueOf("STAINED_GLASS_PANE");
-			} else {
-				String pluginName = ChatColor.stripColor(MessagingUtil.format(config.getString("prefix", "ItemUtil").split("\\s")[0]));
-				Bukkit.getLogger().info("[" + pluginName + "] Invalid material '" + matString + "' @ " + path);
-				return null;
-			}
-		}
-		int amount = config.getInt(path + "amount", 1);
-		item = new ItemStack(mat, amount);
-		short data = (short) config.getInt(path + "data", item.getDurability());
-
-		// Allow compatibility for < 1.13 configs
-		if (matString.equals("GRAY_STAINED_GLASS_PANE")) {
-			data = (short) 7;
-		}
-
-		item.setDurability(data);
-		ItemMeta itemMeta = item.getItemMeta();
-		String   name     = config.getString(path + "name", "");
-		if (!name.equals("")) {
-			itemMeta.setDisplayName(MessagingUtil.format(name));
-		}
-
-		List<String> loreLines = config.getStringList(path + "lore");
-		if (!loreLines.isEmpty()) {
-			List<String> lore = new ArrayList<>();
-			for (String loreLine : loreLines) {
-				lore.add(MessagingUtil.format(loreLine));
-			}
-			itemMeta.setLore(lore);
-		}
-
-		List<String> enchants = config.getStringList(path + "enchants");
-		for (String enchantInfo : enchants) {
-			int         colonIndex  = enchantInfo.indexOf(":");
-			Enchantment enchantment = Enchantment.getByName(enchantInfo.substring(0, colonIndex));
-			if (enchantment != null) {
-				int level = Integer.parseInt(enchantInfo.substring(colonIndex + 1, enchantInfo.length()));
-				itemMeta.addEnchant(enchantment, level, true);
-			}
-		}
-
-		List<String> itemFlags = config.getStringList(path + "item-flags");
-		for (String itemFlag : itemFlags) {
-			itemMeta.addItemFlags(ItemFlag.valueOf(itemFlag));
-		}
-
-		if ((mat.name().equals("PLAYER_HEAD") || mat.name().equals("SKULL_ITEM"))) {
-			if (mat.name().equals("SKULL_ITEM") && !config.isSet(path + "data")) {
-				item.setDurability((short) 3);
-			}
-			if (config.isSet(path + "skin-value")) {
-				ItemMeta oldItemMeta = itemMeta;
-				itemMeta = ItemUtil.applyCustomHead(itemMeta, config.getString(path + "skin-value"));
-				if (itemMeta == null) {
-					itemMeta = oldItemMeta;
-					String pluginName = ChatColor.stripColor(MessagingUtil.format(config.getString("prefix", "ItemUtil").split("\\s")[0]));
-					Bukkit.getLogger().info("[" + pluginName + "] Failed to load skull skin-value @ " + path);
-				}
-			}
-		}
-
-		if ((mat == Material.LEATHER_BOOTS || mat == Material.LEATHER_CHESTPLATE || mat == Material.LEATHER_HELMET || mat == Material.LEATHER_LEGGINGS) && config.isSet(path + "color")) {
-			LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) itemMeta;
-			leatherArmorMeta.setColor(Color.fromRGB(config.getInt(path + "color")));
-			itemMeta = leatherArmorMeta;
-		}
-
-		item.setItemMeta(itemMeta);
-
-		return item;
-	}
-
-	public static SkullMeta applyCustomHead(ItemMeta itemMeta, String value) {
-		GameProfile gameProfile = new GameProfile(UUID.randomUUID(), null);
-		gameProfile.getProperties().put("textures", new Property("textures", value));
-
-		SkullMeta skullMeta = (SkullMeta) itemMeta;
-		try {
-			Field profileField = skullMeta.getClass().getDeclaredField("profile");
-			profileField.setAccessible(true);
-			profileField.set(skullMeta, gameProfile);
-		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException exception) {
-			return null;
-		}
-
-		return skullMeta;
 	}
 
 	public int getSlot(String path) {
