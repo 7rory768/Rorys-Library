@@ -13,10 +13,10 @@ public class NumberUtil {
     static {
         moneySuffixes.put(1_000L, "k");
         moneySuffixes.put(1_000_000L, "M");
-        moneySuffixes.put(1_000_000_000L, "G");
+        moneySuffixes.put(1_000_000_000L, "B");
         moneySuffixes.put(1_000_000_000_000L, "T");
-        moneySuffixes.put(1_000_000_000_000_000L, "P");
-        moneySuffixes.put(1_000_000_000_000_000_000L, "E");
+        moneySuffixes.put(1_000_000_000_000_000L, "Q");
+        moneySuffixes.put(1_000_000_000_000_000_000L, "P");
     }
 
     public static String beautify(long value) {
