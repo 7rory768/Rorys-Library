@@ -19,19 +19,24 @@ public class CustomConfig {
 
     public CustomConfig(JavaPlugin plugin, String fileName) {
         this.plugin = plugin;
-        this.fileName = fileName;
+
+        if (!fileName.endsWith(".yml")) {
+            this.fileName = fileName + ".yml";
+        } else {
+            this.fileName = fileName;
+        }
     }
 
     public void reloadConfig() {
         if (this.file == null) {
-            this.file = new File(this.plugin.getDataFolder(), this.fileName + ".yml");
+            this.file = new File(this.plugin.getDataFolder(), this.fileName);
         }
         this.config = YamlConfiguration.loadConfiguration(this.file);
 
         // Look for defaults in the jar
         if (this.plugin != null) {
             try {
-                InputStream inputStream = this.plugin.getResource(this.fileName + ".yml");
+                InputStream inputStream = this.plugin.getResource(this.fileName);
                 if (inputStream != null) {
                     Reader defConfigStream = new InputStreamReader(inputStream, "UTF8");
                     if (defConfigStream != null) {
@@ -66,10 +71,10 @@ public class CustomConfig {
 
     public void saveDefaultConfig() {
         if (this.file == null) {
-            this.file = new File(this.plugin.getDataFolder(), this.fileName + ".yml");
+            this.file = new File(this.plugin.getDataFolder(), this.fileName);
         }
         if (!this.file.exists()) {
-            this.plugin.saveResource(this.fileName + ".yml", false);
+            this.plugin.saveResource(this.fileName, false);
         }
     }
 
