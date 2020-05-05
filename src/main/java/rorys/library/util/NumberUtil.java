@@ -36,7 +36,7 @@ public class NumberUtil {
         return hasDecimal ? NumberUtil.setMaxDecimals((truncated / 10d), 1) + suffix : NumberUtil.setMaxDecimals((truncated / 10), 1) + suffix;
     }
 
-    public String getCommaString(int number) {
+    public static String getCommaString(int number) {
         String commaString = "" + number;
         for (int i = commaString.length() - 3; i > 0; i = i - 3) {
             commaString = commaString.substring(0, i) + "," + commaString.substring(i);
