@@ -25,7 +25,7 @@ public class NumberUtil {
         //Long.MIN_VALUE == -Long.MIN_VALUE so we need an adjustment here
         if (value == Double.MIN_VALUE) return beautify(Double.MIN_VALUE + 1);
         if (value < 0) return "-" + beautify(-value);
-        if (value < 1000) return Double.toString(value); //deal with easy case
+        if (value < 1000) return String.valueOf((int) value); //deal with easy case
 
         Map.Entry<Double, String> e = moneySuffixes.floorEntry(value);
         Double divideBy = e.getKey();
