@@ -3,8 +3,13 @@ package rorys.library.util;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class SoundUtil {
+
+	public static void playSound(Player player, JavaPlugin plugin, String path) {
+		playSound(player, plugin.getConfig(), path);
+	}
 	
 	public static void playSound(Player player, FileConfiguration config, String path) {
 		if (!path.endsWith(".")) {
