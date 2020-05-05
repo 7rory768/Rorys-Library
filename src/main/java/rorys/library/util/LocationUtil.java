@@ -32,6 +32,14 @@ public class LocationUtil {
         return (loc.getWorld().getName() + "|" + loc.getX() + "|" + loc.getY() + "|" + loc.getZ() + "|" + loc.getYaw() + "|" + loc.getPitch()).replace('.', ',');
     }
 
+    public static String toString(Location location, boolean blockString) {
+        if (blockString) {
+            return toBlockString(location);
+        }
+
+        return toString(location);
+    }
+
     public static Location fromPath(FileConfiguration config, String path) {
         if (!path.endsWith(".")) {
             path += ".";
