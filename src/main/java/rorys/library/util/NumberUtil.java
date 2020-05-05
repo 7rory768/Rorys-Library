@@ -1,10 +1,38 @@
 package rorys.library.util;
 
 import java.text.DecimalFormat;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 
 public class NumberUtil {
 
     private static String[] suffixes = new String[] { "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th" };
+
+    private static final NavigableMap<Long, String> moneySuffixes = new TreeMap<>();
+    static {
+        moneySuffixes.put(1_000L, "k");
+        moneySuffixes.put(1_000_000L, "M");
+        moneySuffixes.put(1_000_000_000L, "G");
+        moneySuffixes.put(1_000_000_000_000L, "T");
+        moneySuffixes.put(1_000_000_000_000_000L, "P");
+        moneySuffixes.put(1_000_000_000_000_000_000L, "E");
+    }
+
+    public static String beautify(long value) {
+        //Long.MIN_VALUE == -Long.MIN_VALUE so we need an adjustment here
+        if (value == Long.MIN_VALUE) return beautify(Long.MIN_VALUE + 1);
+        if (value < 0) return "-" + beautify(-value);
+        if (value < 1000) return Long.toString(value); //deal with easy case
+
+        Map.Entry<Long, String> e        = moneySuffixes.floorEntry(value);
+        Long                    divideBy = e.getKey();
+        String suffix = e.getValue();
+
+        long truncated = value / (divideBy / 10); //the number part of the output times 10
+        boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
+        return hasDecimal ? (truncated / 10d) + suffix : (truncated / 10) + suffix;
+    }
 
     public static boolean isInt(String arg) {
         try {
