@@ -85,8 +85,6 @@ public class MessagingUtil {
 	}
 
 	public void sendMessage(CommandSender sender, String msg, String... placeholders) {
-		msg = this.placeholders(msg);
-
 		for (int i = 0; i < placeholders.length - 1; i += 2) {
 			String placeholder = placeholders[i];
 			if (placeholder.charAt(0) != '{') {
@@ -102,7 +100,7 @@ public class MessagingUtil {
 			msg = msg.replace(placeholders[i], placeholders[i + 1]);
 		}
 
-		sender.sendMessage(msg);
+		sender.sendMessage(this.placeholders(msg));
 	}
 
 	public void sendMessageAtPath(CommandSender sender, String path, String... placeholders) {
