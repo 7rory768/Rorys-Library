@@ -125,6 +125,11 @@ public class NumberUtil {
     }
 
     public static String setMaxDecimals(double arg, int places) {
+        if (places == 0) {
+            String str = String.valueOf(arg);
+            return str.substring(0, str.indexOf("."));
+        }
+
         String suffix = "";
         for (int i = 0; i < places; i++) {
             suffix += "#";
