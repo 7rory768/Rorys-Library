@@ -48,7 +48,11 @@ public class SQLManager {
         }).runTaskTimerAsynchronously(plugin, 60 * 20, 60 * 20);
 
     }
-
+    
+    public Connection getConnection() {
+        return connection;
+    }
+    
     public Connection createConnection() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
