@@ -69,8 +69,6 @@ public class SQLManager {
                 return false;
             }
         }
-        execute("CREATE TABLE IF NOT EXISTS " + tableName + " (chestname VARCHAR(30) NOT NULL, world VARCHAR(50) NOT NULL, x INT NOT NULL, y INT NOT NULL, z INT NOT NULL, user VARCHAR(36))"
-        );
         return true;
     }
 
