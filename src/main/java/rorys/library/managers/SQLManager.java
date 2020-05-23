@@ -21,11 +21,11 @@ public class SQLManager {
         this.tableName = tableName;
 
         FileConfiguration config = plugin.getConfig();
-        host = config.getString("mysql.host");
-        port = config.getInt("mysql.port");
-        database = config.getString("mysql.database");
-        username = config.getString("mysql.username");
-        password = config.getString("mysql.password");
+        host = config.getString("mysql.host", "localhost");
+        port = config.getInt("mysql.port", 3306);
+        database = config.getString("mysql.database", "mcserver");
+        username = config.getString("mysql.username", "root");
+        password = config.getString("mysql.password", "root");
 
         try {
             checkConnection();
