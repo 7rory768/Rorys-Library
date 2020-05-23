@@ -16,14 +16,14 @@ public class SQLManager {
     private String host, database, tableName, username, password;
     private int port;
 
-    public SQLManager(JavaPlugin plugin) {
+    public SQLManager(JavaPlugin plugin, String tableName) {
         this.plugin = plugin;
+        this.tableName = tableName;
 
         FileConfiguration config = plugin.getConfig();
         host = config.getString("mysql.host");
         port = config.getInt("mysql.port");
         database = config.getString("mysql.database");
-        tableName = "advancedchest";
         username = config.getString("mysql.username");
         password = config.getString("mysql.password");
 
