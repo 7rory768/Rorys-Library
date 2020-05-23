@@ -53,6 +53,10 @@ public class SQLManager {
         return connection;
     }
     
+    public String getTableName() {
+        return tableName;
+    }
+    
     public Connection createConnection() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
