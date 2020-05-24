@@ -37,7 +37,7 @@ public class SkinUtil {
             }
         }
         
-        if (name.equals("NULL")) {
+        if (name == null || name.equals("NULL")) {
             try {
                 String uuidStr = uuid.toString().replace("-", "");
                 URL url_1 = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + uuidStr + "?unsigned=false");
