@@ -26,7 +26,7 @@ public class SkinUtil {
     }
 
     public static String getName(UUID uuid) {
-        String name = null;
+        String name = "NULL";
         OfflinePlayer player = Bukkit.getPlayer(uuid);
         if(player != null) {
             name = player.getName();
@@ -37,15 +37,15 @@ public class SkinUtil {
             }
         }
         
-        if (name == null) {
+        if (name.equals("NULL")) {
             try {
                 String uuidStr = uuid.toString().replace("-", "");
                 URL url_1 = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + uuidStr + "?unsigned=false");
                 InputStreamReader reader_1 = new InputStreamReader(url_1.openStream());
-                JsonObject textureProperty = new JsonParser().parse(reader_1).getAsJsonObject().get("properties").getAsJsonArray().get(0).getAsJsonObject();
-                name = textureProperty.get("name").getAsString();
+                JsonObject jsonObject = new JsonParser().parse(reader_1).getAsJsonObject();
+                name = jsonObject.get("name").getAsString();
             } catch (Exception e) {
-                return null;
+                return "NULL";
             }
         }
         
