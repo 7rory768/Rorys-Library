@@ -16,16 +16,16 @@ public class SQLManager {
     private String host, database, tableName, username, password;
     private int port;
 
-    public SQLManager(JavaPlugin plugin) {
+    public SQLManager(JavaPlugin plugin, String tableName) {
         this.plugin = plugin;
+        this.tableName = tableName;
 
         FileConfiguration config = plugin.getConfig();
-        host = config.getString("mysql.host");
-        port = config.getInt("mysql.port");
-        database = config.getString("mysql.database");
-        tableName = "advancedchest";
-        username = config.getString("mysql.username");
-        password = config.getString("mysql.password");
+        host = config.getString("mysql.host", "localhost");
+        port = config.getInt("mysql.port", 3306);
+        database = config.getString("mysql.database", "mcserver");
+        username = config.getString("mysql.username", "root");
+        password = config.getString("mysql.password", "root");
 
         try {
             checkConnection();
@@ -48,7 +48,15 @@ public class SQLManager {
         }).runTaskTimerAsynchronously(plugin, 60 * 20, 60 * 20);
 
     }
-
+    
+    public Connection getConnection() {
+        return connection;
+    }
+    
+    public String getTableName() {
+        return tableName;
+    }
+    
     public Connection createConnection() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
@@ -69,8 +77,6 @@ public class SQLManager {
                 return false;
             }
         }
-        execute("CREATE TABLE IF NOT EXISTS " + tableName + " (chestname VARCHAR(30) NOT NULL, world VARCHAR(50) NOT NULL, x INT NOT NULL, y INT NOT NULL, z INT NOT NULL, user VARCHAR(36))"
-        );
         return true;
     }
 

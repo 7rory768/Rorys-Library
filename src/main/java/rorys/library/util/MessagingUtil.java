@@ -6,6 +6,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by Rory on 6/22/2017.
  */
@@ -56,10 +59,6 @@ public class MessagingUtil {
 		this.finalPrefixFormatting = this.finalColor + this.finalFormat;
 	}
 
-	public String placeholders(String arg) {
-		return StringEscapeUtils.unescapeJava(ChatColor.translateAlternateColorCodes('&', arg.replace("{PREFIX}", this.prefix)));
-	}
-
 	public JavaPlugin getPlugin() {
 		return plugin;
 	}
@@ -83,8 +82,8 @@ public class MessagingUtil {
 	public String getFirstColor() {
 		return firstColor;
 	}
-
-	public void sendMessage(CommandSender sender, String msg, String... placeholders) {
+	
+	public String placeholders(String msg, String... placeholders) {
 		for (int i = 0; i < placeholders.length - 1; i += 2) {
 			String placeholder = placeholders[i];
 			if (placeholder.charAt(0) != '{') {
@@ -95,12 +94,16 @@ public class MessagingUtil {
 			}
 			placeholders[i] = placeholder;
 		}
-
+		
 		for (int i = 0; i < placeholders.length - 1; i += 2) {
 			msg = msg.replace(placeholders[i], placeholders[i + 1]);
 		}
+		
+		return StringEscapeUtils.unescapeJava(ChatColor.translateAlternateColorCodes('&', msg.replace("{PREFIX}", this.prefix)));
+	}
 
-		sender.sendMessage(this.placeholders(msg));
+	public void sendMessage(CommandSender sender, String msg, String... placeholders) {
+		sender.sendMessage(this.placeholders(msg, placeholders));
 	}
 
 	public void sendMessageAtPath(CommandSender sender, String path, String... placeholders) {
@@ -124,22 +127,7 @@ public class MessagingUtil {
 	}
 
 	public void broadcastMessage(String msg, String... placeholders) {
-        for (int i = 0; i < placeholders.length - 1; i += 2) {
-            String placeholder = placeholders[i];
-            if (placeholder.charAt(0) != '{') {
-                placeholder = "{" + placeholder;
-            }
-            if (placeholder.charAt(placeholder.length() - 1) != '}') {
-                placeholder += "}";
-            }
-            placeholders[i] = placeholder;
-        }
-
-        for (int i = 0; i < placeholders.length - 1; i += 2) {
-            msg = msg.replace(placeholders[i], placeholders[i + 1]);
-        }
-
-		Bukkit.broadcastMessage(this.placeholders(msg));
+		Bukkit.broadcastMessage(this.placeholders(msg, placeholders));
 	}
 
 	public void broadcastMessageAtPath(String path, String... placeholders) {
@@ -165,7 +153,22 @@ public class MessagingUtil {
 		return MessagingUtil.format(progressBar);
 	}
 
-	public static String format(String arg) {
-		return StringEscapeUtils.unescapeJava(ChatColor.translateAlternateColorCodes('&', arg));
+	public static String format(String msg, String... placeholders) {
+		for (int i = 0; i < placeholders.length - 1; i += 2) {
+			String placeholder = placeholders[i];
+			if (placeholder.charAt(0) != '{') {
+				placeholder = "{" + placeholder;
+			}
+			if (placeholder.charAt(placeholder.length() - 1) != '}') {
+				placeholder += "}";
+			}
+			placeholders[i] = placeholder;
+		}
+		
+		for (int i = 0; i < placeholders.length - 1; i += 2) {
+			msg = msg.replace(placeholders[i], placeholders[i + 1]);
+		}
+		
+		return StringEscapeUtils.unescapeJava(ChatColor.translateAlternateColorCodes('&', msg));
 	}
 }
