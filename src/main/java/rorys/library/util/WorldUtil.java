@@ -1,4 +1,4 @@
-package main.java.rorys.library.util;
+package rorys.library.util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
