@@ -1,7 +1,7 @@
-package rorys.library.util;
+package roryslibrary.util;
 
 import org.bukkit.plugin.java.JavaPlugin;
-import rorys.library.configs.CustomConfig;
+import roryslibrary.configs.CustomConfig;
 
 /**
  * Created by Rory on 7/8/2017.

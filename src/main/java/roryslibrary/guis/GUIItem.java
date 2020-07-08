@@ -1,4 +1,4 @@
-package rorys.library.guis;
+package roryslibrary.guis;
 
 import org.bukkit.inventory.ItemStack;
 

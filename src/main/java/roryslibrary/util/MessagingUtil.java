@@ -1,13 +1,10 @@
-package rorys.library.util;
+package roryslibrary.util;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by Rory on 6/22/2017.

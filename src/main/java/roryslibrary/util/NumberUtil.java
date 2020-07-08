@@ -1,4 +1,4 @@
-package rorys.library.util;
+package roryslibrary.util;
 
 import java.text.DecimalFormat;
 import java.util.Map;

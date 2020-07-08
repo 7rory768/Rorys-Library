@@ -1,4 +1,4 @@
-package rorys.library.util;
+package roryslibrary.util;
 
 import org.bukkit.entity.Player;
 

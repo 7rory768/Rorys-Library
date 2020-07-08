@@ -1,4 +1,4 @@
-package rorys.library.guis;
+package roryslibrary.guis;
 
 public enum GUILocation {
 	

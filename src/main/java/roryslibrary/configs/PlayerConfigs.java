@@ -1,4 +1,4 @@
-package rorys.library.configs;
+package roryslibrary.configs;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;

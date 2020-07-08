@@ -1,4 +1,4 @@
-package rorys.library.util;
+package roryslibrary.util;
 
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;

@@ -1,8 +1,8 @@
-package rorys.library;
+package roryslibrary;
 
 import org.bukkit.plugin.java.JavaPlugin;
-import rorys.library.util.ItemUtil;
-import rorys.library.util.MessagingUtil;
+import roryslibrary.util.ItemUtil;
+import roryslibrary.util.MessagingUtil;
 
 /**
  * Created by Rory on 6/22/2017.
