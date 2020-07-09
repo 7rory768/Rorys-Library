@@ -26,6 +26,14 @@ public class CustomConfig {
             this.fileName = fileName;
         }
     }
+    
+    public CustomConfig load() {
+        getConfig().options().copyDefaults(true);
+        saveDefaultConfig();
+        reloadConfig();
+        
+        return this;
+    }
 
     public void reloadConfig() {
         if (this.file == null) {

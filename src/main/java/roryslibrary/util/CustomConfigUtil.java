@@ -9,9 +9,7 @@ import roryslibrary.configs.CustomConfig;
 public class CustomConfigUtil {
 
     public static void loadConfig(CustomConfig customConfig) {
-        customConfig.getConfig().options().copyDefaults(true);
-        customConfig.saveDefaultConfig();
-        customConfig.reloadConfig();
+        customConfig.load();
     }
 
     public static void loadDefaultConfig(JavaPlugin plugin) {
