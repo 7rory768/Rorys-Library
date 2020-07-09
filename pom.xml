@@ -40,6 +40,26 @@
                         </goals>
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <filters>
+                                <filter>
+                                    <artifact>org.jsoup</artifact>
+                                    <includes>
+                                        <include>org/jsoup/Jsoup.class</include>
+                                        <include>org/jsoup/nodes/Document.class</include>
+                                        <include>org/jsoup/nodes/Element.class</include>
+                                        <include>org/jsoup/helper/StringUtil.class</include>
+                                        <include>org/jsoup/helper/Validate.class</include>
+                                        <include>org/jsoup/parser/Tag.class</include>
+                                        <include>org/jsoup/parser/Parser.class</include>
+                                        <include>org/jsoup/select/*.class</include>
+                                    </includes>
+                                    <!-->import org.jsoup.helper.StringUtil;
+import org.jsoup.helper.Validate;
+import org.jsoup.parser.Tag;
+import org.jsoup.parser.Parser;
+import org.jsoup.select.*;<!-->
+                                </filter>
+                            </filters>
                         </configuration>
                     </execution>
                 </executions>
@@ -81,7 +101,7 @@
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <version>1.8.3</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
