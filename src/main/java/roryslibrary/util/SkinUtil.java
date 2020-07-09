@@ -10,11 +10,14 @@ import org.jsoup.nodes.Element;
 
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.UUID;
 
 public class SkinUtil {
 	
 	private static JsonParser parser = new JsonParser();
+	
+	private static HashMap<String, String> skinCache = new HashMap<>();
 	
 	public static UUID getUUIDFromName(String name) {
 		try {
@@ -72,15 +75,22 @@ public class SkinUtil {
 		}
 	}
 	
-	public static String getSkinValue(final String url) {
-		try {
-			final Document doc = Jsoup.connect(url).get();
-			final Element element = doc.getElementById("UUID-Value");
-			
-			if (element == null) return url;
-			return element.text();
-		} catch (Exception ex) {
-			return url;
+	public static String getSkinValue(String url) {
+		url = url.toLowerCase();
+		
+		if (!skinCache.containsKey(url)) {
+			try {
+				final Document doc = Jsoup.connect(url).get();
+				final Element element = doc.getElementById("UUID-Value");
+				
+				if (element == null) return url;
+				
+				skinCache.put(url, element.text());
+			} catch (Exception ex) {
+				return url;
+			}
 		}
+		
+		return skinCache.get(url);
 	}
 }
