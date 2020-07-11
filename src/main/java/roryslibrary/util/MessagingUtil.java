@@ -56,6 +56,10 @@ public abstract class MessagingUtil {
 		this.finalPrefixFormatting = this.finalColor + this.finalFormat;
 	}
 	
+	public String getMessage(String path, String... placeholders) {
+		return placeholders(getConfig().getString(path), placeholders);
+	}
+	
 	public void sendMessage(CommandSender sender, String msg, String... placeholders) {
 		sender.sendMessage(this.placeholders(msg, placeholders));
 	}
@@ -82,6 +86,14 @@ public abstract class MessagingUtil {
 		} else {
 			sendMessage(sender, "{PREFIX}Configuration file reloaded successfully");
 		}
+	}
+	
+	public void broadcastMessageWithPerm(String msg, String permission, String... placeholders) {
+		Bukkit.broadcast(this.placeholders(msg, placeholders), permission);
+	}
+	
+	public void broadcastMessageWithPermAtPath(String path, String permission, String... placeholders) {
+		broadcastMessageWithPerm(getConfig().getString(path), permission, placeholders);
 	}
 	
 	public void broadcastMessage(String msg, String... placeholders) {
