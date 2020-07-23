@@ -17,6 +17,7 @@ public enum Version {
 	private String name;
 	private int weight;
 	private String abstractName;
+	private static Version version;
 	
 	Version(String name, int weight, String abstractName) {
 		this.name = name;
@@ -46,6 +47,8 @@ public enum Version {
 	}
 	
 	public static Version getVersion() {
-		return Version.getByName(Bukkit.getBukkitVersion().split("-")[0]);
+		if (Version.version == null) version = Version.getByName(Bukkit.getBukkitVersion().split("-")[0]);
+		
+		return version;
 	}
 }
