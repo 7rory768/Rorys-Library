@@ -180,7 +180,7 @@ public class ItemUtil {
 		try {
 			UUID uuid;
 			if (value.length() <= 16) {
-				uuid = SkinUtil.getUUIDFromName(value);
+				uuid = SkinUtil.getUUIDFromName(value, false);
 			} else {
 				uuid = UUID.fromString(value);
 			}
@@ -216,7 +216,7 @@ public class ItemUtil {
 	
 	public static SkullMeta applyCustomHead(ItemMeta itemMeta, UUID uuid) {
 		SkullMeta skullMeta = (SkullMeta) itemMeta;
-		skullMeta.setOwner(SkinUtil.getName(uuid));
+		skullMeta.setOwner(SkinUtil.getName(uuid, false));
 		return skullMeta;
 	}
 	
