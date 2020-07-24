@@ -14,9 +14,9 @@ public enum Version {
 	v1_15("1.15", 15, "v1_15_2"),
 	v1_16("1.16", 16, "v1_16_1");
 	
-	private String name;
-	private int weight;
-	private String abstractName;
+	public final String name;
+	public final int weight;
+	public final String abstractName;
 	private static Version version;
 	
 	Version(String name, int weight, String abstractName) {
