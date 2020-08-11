@@ -79,6 +79,9 @@ public class PlayerConfigs {
     public void deleteConfig(UUID uuid) {
         getConfig(uuid);
         playerFiles.get(uuid).delete();
+        
+        playerFiles.remove(uuid);
+        playerConfigs.remove(uuid);
     }
 
 }
