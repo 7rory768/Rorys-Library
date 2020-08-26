@@ -17,6 +17,8 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -190,8 +192,15 @@ public class ItemUtil {
 			// Attempt to get skin value instead
 		}
 		
+		boolean customHead = false;
+		try {
+			new URL(value);
+			customHead = true;
+		} catch (MalformedURLException var6) {
+		}
+		
 		GameProfile gameProfile = new GameProfile(UUID.randomUUID(), null);
-		gameProfile.getProperties().put("textures", new Property("textures", SkinUtil.getSkinValue(value)));
+		gameProfile.getProperties().put("textures", new Property("textures", customHead ? SkinUtil.getSkinValue(value) : value));
 		
 		SkullMeta skullMeta = (SkullMeta) itemMeta;
 		try {
