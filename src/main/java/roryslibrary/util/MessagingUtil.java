@@ -37,7 +37,7 @@ public abstract class MessagingUtil {
 			for (int index = this.prefix.length(); index > 1; index--) {
 				String bit = this.prefix.substring(index - 2, index);
 				if (bit.startsWith("§")) {
-					int chNum = (int) bit.toLowerCase().charAt(1);
+					int chNum = bit.toLowerCase().charAt(1);
 					if ((97 <= chNum && chNum <= 102) || (48 <= chNum && chNum <= 57) || chNum == 114) {
 						if (finalColor.equals("")) {
 							finalColor = bit;
@@ -56,8 +56,22 @@ public abstract class MessagingUtil {
 		this.finalPrefixFormatting = this.finalColor + this.finalFormat;
 	}
 	
+	public String getString(String path) {
+		String message = "";
+		if (getConfig().isList(path)) {
+			for (String line : getConfig().getStringList(path)) {
+				message += line + "\n";
+			}
+			message = message.trim();
+		} else {
+			message = getConfig().getString(path);
+		}
+		
+		return message;
+	}
+	
 	public String getMessage(String path, String... placeholders) {
-		return placeholders(getConfig().getString(path), placeholders);
+		return placeholders(getString(path), placeholders);
 	}
 	
 	public void sendMessage(CommandSender sender, String msg, String... placeholders) {
@@ -65,7 +79,7 @@ public abstract class MessagingUtil {
 	}
 	
 	public void sendMessageAtPath(CommandSender sender, String path, String... placeholders) {
-		sendMessage(sender, getConfig().getString(path), placeholders);
+		sendMessage(sender, getString(path), placeholders);
 	}
 	
 	public void sendNoPermissionMessage(CommandSender sender) {
@@ -101,7 +115,7 @@ public abstract class MessagingUtil {
 	}
 	
 	public void broadcastMessageAtPath(String path, String... placeholders) {
-		broadcastMessage(getConfig().getString(path), placeholders);
+		broadcastMessage(getString(path), placeholders);
 	}
 	
 	public String getProgressBar(double progress, double maxProgress, int progressBarCount, String completedColor, String missingColor, String progressBarChar) {
@@ -123,7 +137,7 @@ public abstract class MessagingUtil {
 		return MessagingUtil.format(progressBar);
 	}
 	
-	public static String format(String msg, String... placeholders) {
+	public static String replacePlaceholders(String msg, String... placeholders) {
 		for (int i = 0; i < placeholders.length - 1; i += 2) {
 			String placeholder = placeholders[i];
 			if (placeholder.charAt(0) != '{') {
@@ -139,26 +153,15 @@ public abstract class MessagingUtil {
 			msg = msg.replace(placeholders[i], placeholders[i + 1]);
 		}
 		
-		return StringEscapeUtils.unescapeJava(ChatColor.translateAlternateColorCodes('&', msg));
+		return msg;
+	}
+	
+	public static String format(String msg, String... placeholders) {
+		return StringEscapeUtils.unescapeJava(ChatColor.translateAlternateColorCodes('&', replacePlaceholders(msg, placeholders)));
 	}
 	
 	public String placeholders(String msg, String... placeholders) {
-		for (int i = 0; i < placeholders.length - 1; i += 2) {
-			String placeholder = placeholders[i];
-			if (placeholder.charAt(0) != '{') {
-				placeholder = "{" + placeholder;
-			}
-			if (placeholder.charAt(placeholder.length() - 1) != '}') {
-				placeholder += "}";
-			}
-			placeholders[i] = placeholder;
-		}
-		
-		for (int i = 0; i < placeholders.length - 1; i += 2) {
-			msg = msg.replace(placeholders[i], placeholders[i + 1]);
-		}
-		
-		return StringEscapeUtils.unescapeJava(ChatColor.translateAlternateColorCodes('&', msg.replace("{PREFIX}", this.prefix)));
+		return StringEscapeUtils.unescapeJava(ChatColor.translateAlternateColorCodes('&', replacePlaceholders(msg, placeholders).replace("{PREFIX}", this.prefix)));
 	}
 	
 }
