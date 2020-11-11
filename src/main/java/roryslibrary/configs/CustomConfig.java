@@ -3,6 +3,7 @@ package roryslibrary.configs;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import roryslibrary.util.DebugUtil;
 
 import java.io.*;
 
@@ -19,6 +20,8 @@ public class CustomConfig {
 
     public CustomConfig(JavaPlugin plugin, String fileName) {
         this.plugin = plugin;
+    
+        DebugUtil.setPlugin(plugin);
 
         if (!fileName.endsWith(".yml")) {
             this.fileName = fileName + ".yml";
