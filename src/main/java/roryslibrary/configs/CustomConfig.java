@@ -20,8 +20,6 @@ public class CustomConfig {
 
     public CustomConfig(JavaPlugin plugin, String fileName) {
         this.plugin = plugin;
-    
-        DebugUtil.setPlugin(plugin);
 
         if (!fileName.endsWith(".yml")) {
             this.fileName = fileName + ".yml";
