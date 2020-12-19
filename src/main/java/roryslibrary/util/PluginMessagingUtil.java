@@ -12,7 +12,6 @@ public class PluginMessagingUtil extends MessagingUtil {
 	
 	public PluginMessagingUtil(JavaPlugin plugin) {
 		this.plugin = plugin;
-		DebugUtil.setPlugin(plugin);
 		reload();
 	}
 	
