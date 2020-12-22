@@ -27,6 +27,8 @@ public class UpdateNotifier {
 		this.messagingUtil = messagingUtil;
 		this.ID = ID;
 		this.localPluginVersion = javaPlugin.getDescription().getVersion();
+		
+		checkForUpdate();
 	}
 	
 	public String getUpdateMsg() {
@@ -40,6 +42,7 @@ public class UpdateNotifier {
 	public void checkForUpdate() {
 		//The request is executed asynchronously as to not block the main thread.
 		Bukkit.getScheduler().runTaskAsynchronously(this.javaPlugin, () -> {
+			needsUpdate = false;
 			//Request the current version of your plugin on SpigotMC.
 			try {
 				HttpsURLConnection connection = (HttpsURLConnection) new URL("https://api.spigotmc.org/legacy/update.php?resource=" + ID).openConnection();
@@ -60,10 +63,10 @@ public class UpdateNotifier {
 			
 			String[] localNums = localPluginVersion.split(".");
 			String[] spigotNums = spigotPluginVersion.split(".");
-			boolean needsUpdate = false;
 			for (int i = 0; i < Math.max(localNums.length, spigotNums.length); i++) {
 				int localNum = localNums.length <= i ? 0 : Integer.parseInt(localNums[i]);
 				int spigotNum = spigotNums.length <= i ? 0 : Integer.parseInt(spigotNums[i]);
+				
 				if (localNum > spigotNum) {
 					return;
 				} else if (localNum < spigotNum) {
