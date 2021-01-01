@@ -12,7 +12,7 @@ public enum Version {
 	v1_13("1.13", 13, "v1_13_2"),
 	v1_14("1.14", 14, "v1_14_4"),
 	v1_15("1.15", 15, "v1_15_2"),
-	v1_16("1.16", 16, "v1_16_1");
+	v1_16("1.16", 16, "v1_16_4");
 	
 	public final String name;
 	public final int weight;
@@ -43,12 +43,16 @@ public enum Version {
 				return version;
 			}
 		}
-		return Version.v1_15;
+		return Version.v1_16;
 	}
 	
 	public static Version getVersion() {
 		if (Version.version == null) version = Version.getByName(Bukkit.getBukkitVersion().split("-")[0]);
 		
 		return version;
+	}
+	
+	public static boolean isRunningMinimum(Version version) {
+		return getVersion().getWeight() >= version.getWeight();
 	}
 }
