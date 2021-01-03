@@ -63,15 +63,14 @@ public abstract class MessagingUtil {
 		StringBuilder builder = new StringBuilder();
 		for (String word : arg.split("\\s")) {
 			if (word.startsWith("§")) color = arg.substring(0, 2);
-			else if (color != null) {
-				arg = color + arg;
-			}
+			else if (color != null) word = color + word;
 			
 			builder.append(word);
 			builder.append(" ");
 		}
 		
-		return builder.toString().trim();
+		if (builder.length() > 0) return builder.substring(0, builder.length() - 1);
+		return builder.toString();
 	}
 	
 	public String getString(String path) {
@@ -80,7 +79,7 @@ public abstract class MessagingUtil {
 			for (String line : getConfig().getStringList(path)) {
 				message += line + "\n";
 			}
-			message = message.trim();
+			message = message.substring(0, message.length() - 1);
 		} else {
 			message = getConfig().getString(path);
 		}
