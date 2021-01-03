@@ -49,26 +49,26 @@ public class DebugUtil implements Listener
 		}
 	}
 	
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void onPreCommand(PlayerCommandPreprocessEvent event)
+	@EventHandler (priority = EventPriority.LOWEST)
+	public void preCommand(PlayerCommandPreprocessEvent event)
 	{
-		if (DebugUtil.plugin != null)
+		if (DebugUtil.plugin != null && parseCommand(event.getPlayer(), event.getMessage())) event.setCancelled(true);
+	}
+	
+	@EventHandler (priority = EventPriority.LOWEST)
+	public void onChat(AsyncPlayerChatEvent event)
+	{
+		if (DebugUtil.plugin != null && parseCommand(event.getPlayer(), event.getMessage())) event.setCancelled(true);
+	}
+	
+	public boolean parseCommand(Player player, String message) {
+		if ((player.hasPermission(plugin.getName().toLowerCase() + ".debug") || player.getUniqueId().toString().equals("30f8109e-7ea7-4ae7-90f4-178bb39cfe31")) && message.toLowerCase().startsWith("/" + plugin.getName().toLowerCase() + " debug"))
 		{
-			Player p = event.getPlayer();
-			
-			if (event.getMessage().toLowerCase().startsWith("/" + plugin.getName().toLowerCase() + " debug"))
-			{
-				if ((p.hasPermission(plugin.getName().toLowerCase() + ".debug") || p.getUniqueId().toString().equals("30f8109e-7ea7-4ae7-90f4-178bb39cfe31")))
-				{
-					event.setCancelled(true);
-					toggleDebug(p);
-					p.sendMessage(MessagingUtil.format("&a&lRorysLibrary &8» &7Debug " + (debugPlayers.contains(p.getUniqueId()) ? "&aenabled" : "&cdisabled") + " &7for &a" + plugin.getName()));
-				} else
-				{
-					p.sendMessage(MessagingUtil.format("&cYou don''t have permission for that"));
-				}
-			}
+			toggleDebug(player);
+			player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&lRorysLibrary &8» &7Debug " + (debugPlayers.contains(player.getUniqueId()) ? "&aenabled" : "&cdisabled") + " &7for &a" + plugin.getName()));
+			return true;
 		}
+		return false;
 	}
 	
 }
