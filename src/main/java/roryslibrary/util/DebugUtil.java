@@ -50,7 +50,7 @@ public class DebugUtil implements Listener
 	}
 	
 	@EventHandler (priority = EventPriority.LOWEST)
-	public void preCommand(PlayerCommandPreprocessEvent event)
+	public void onPreCommand(PlayerCommandPreprocessEvent event)
 	{
 		if (DebugUtil.plugin != null && parseCommand(event.getPlayer(), event.getMessage())) event.setCancelled(true);
 	}
