@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
@@ -44,12 +45,14 @@ public class ItemUtil {
 	}
 	
 	public static ItemStack getItemStack(FileConfiguration config, String path) {
+		if (path.endsWith(".")) path = path.substring(0, path.length() - 1);
+		return getItemStack(config.getConfigurationSection(path));
+	}
+	
+	public static ItemStack getItemStack(ConfigurationSection section) {
 		ItemStack item;
-		if (!path.endsWith(".")) {
-			path += ".";
-		}
 		Material mat;
-		String matString = config.getString(path + "material", "NULL").toUpperCase();
+		String matString = section.getString("material", "NULL").toUpperCase();
 		try {
 			mat = Material.valueOf(matString);
 		} catch (IllegalArgumentException e) {
@@ -59,14 +62,14 @@ public class ItemUtil {
 			} else if (matString.equalsIgnoreCase("GRAY_STAINED_GLASS_PANE")) {
 				mat = Material.valueOf("STAINED_GLASS_PANE");
 			} else {
-				String pluginName = ChatColor.stripColor(MessagingUtil.format(config.getString("prefix", "ItemUtil").split("\\s")[0]));
-				Bukkit.getLogger().info("[" + pluginName + "] Invalid material '" + matString + "' @ " + path);
+				//String pluginName = ChatColor.stripColor(MessagingUtil.format(config.getString("prefix", "ItemUtil").split("\\s")[0]));
+				Bukkit.getLogger().info("[ItemUtil] Invalid material '" + matString + "' @ " + section.getCurrentPath());
 				return null;
 			}
 		}
-		int amount = config.getInt(path + "amount", 1);
+		int amount = section.getInt("amount", 1);
 		item = new ItemStack(mat, amount);
-		short data = (short) config.getInt(path + "data", item.getDurability());
+		short data = (short) section.getInt("data", item.getDurability());
 		
 		// Allow compatibility for < 1.13 configs
 		if (matString.equalsIgnoreCase("GRAY_STAINED_GLASS_PANE")) {
@@ -75,12 +78,12 @@ public class ItemUtil {
 		
 		item.setDurability(data);
 		ItemMeta itemMeta = item.getItemMeta();
-		String name = config.getString(path + "name", "");
+		String name = section.getString("name", "");
 		if (!name.equals("")) {
 			itemMeta.setDisplayName(MessagingUtil.format(name));
 		}
 		
-		List<String> loreLines = config.getStringList(path + "lore");
+		List<String> loreLines = section.getStringList("lore");
 		if (!loreLines.isEmpty()) {
 			List<String> lore = new ArrayList<>();
 			for (String loreLine : loreLines) {
@@ -89,7 +92,7 @@ public class ItemUtil {
 			itemMeta.setLore(lore);
 		}
 		
-		List<String> enchants = config.getStringList(path + "enchants");
+		List<String> enchants = section.getStringList("enchants");
 		for (String enchantInfo : enchants) {
 			int colonIndex = enchantInfo.indexOf(":");
 			Enchantment enchantment = Enchantment.getByName(enchantInfo.substring(0, colonIndex));
@@ -99,29 +102,29 @@ public class ItemUtil {
 			}
 		}
 		
-		List<String> itemFlags = config.getStringList(path + "item-flags");
+		List<String> itemFlags = section.getStringList("item-flags");
 		for (String itemFlag : itemFlags) {
 			itemMeta.addItemFlags(ItemFlag.valueOf(itemFlag));
 		}
 		
 		if ((mat.name().equals("PLAYER_HEAD") || mat.name().equals("SKULL_ITEM"))) {
-			if (mat.name().equals("SKULL_ITEM") && !config.isSet(path + "data")) {
+			if (mat.name().equals("SKULL_ITEM") && !section.isSet("data")) {
 				item.setDurability((short) 3);
 			}
-			if (config.isSet(path + "skin-value")) {
+			if (section.isSet("skin-value")) {
 				ItemMeta oldItemMeta = itemMeta;
-				itemMeta = ItemUtil.applyCustomHead(itemMeta, config.getString(path + "skin-value"));
+				itemMeta = ItemUtil.applyCustomHead(itemMeta, section.getString("skin-value"));
 				if (itemMeta == null) {
 					itemMeta = oldItemMeta;
-					String pluginName = ChatColor.stripColor(MessagingUtil.format(config.getString("prefix", "ItemUtil").split("\\s")[0]));
-					Bukkit.getLogger().info("[" + pluginName + "] Failed to load skull skin-value @ " + path);
+					String pluginName = ChatColor.stripColor(MessagingUtil.format(section.getString("prefix", "ItemUtil").split("\\s")[0]));
+					Bukkit.getLogger().info("[" + pluginName + "] Failed to load skull skin-value @ " + section.getCurrentPath());
 				}
 			}
 		}
 		
-		if ((mat == Material.LEATHER_BOOTS || mat == Material.LEATHER_CHESTPLATE || mat == Material.LEATHER_HELMET || mat == Material.LEATHER_LEGGINGS) && config.isSet(path + "color")) {
+		if ((mat == Material.LEATHER_BOOTS || mat == Material.LEATHER_CHESTPLATE || mat == Material.LEATHER_HELMET || mat == Material.LEATHER_LEGGINGS) && section.isSet("color")) {
 			LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) itemMeta;
-			leatherArmorMeta.setColor(Color.fromRGB(config.getInt(path + "color")));
+			leatherArmorMeta.setColor(Color.fromRGB(section.getInt("color")));
 			itemMeta = leatherArmorMeta;
 		}
 		
