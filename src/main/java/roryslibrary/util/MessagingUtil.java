@@ -25,7 +25,7 @@ public abstract class MessagingUtil {
 	public abstract FileConfiguration getConfig();
 	
 	public void updatePrefix() {
-		setPrefix(this.placeholders(getConfig().getString("prefix")));
+		setPrefix(MessagingUtil.format(getConfig().getString("prefix")));
 		this.updatePrefixFormatting();
 	}
 	

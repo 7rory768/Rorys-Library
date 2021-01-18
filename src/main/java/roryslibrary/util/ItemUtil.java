@@ -43,7 +43,7 @@ public class ItemUtil {
 	public static ItemStack getItemStack(JavaPlugin plugin, String path) {
 		return getItemStack(plugin.getConfig(), path);
 	}
-	
+
 	public static ItemStack getItemStack(FileConfiguration config, String path) {
 		if (path.endsWith(".")) path = path.substring(0, path.length() - 1);
 		return getItemStack(config.getConfigurationSection(path));
