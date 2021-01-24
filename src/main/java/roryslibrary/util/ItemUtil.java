@@ -128,6 +128,10 @@ public class ItemUtil {
 			itemMeta = leatherArmorMeta;
 		}
 		
+		if (section.isSet("custom-model-data") && Version.isRunningMinimum(Version.v1_14)) {
+			itemMeta.setCustomModelData(section.getInt("custom-model-data"));
+		}
+		
 		item.setItemMeta(itemMeta);
 		
 		return item;
