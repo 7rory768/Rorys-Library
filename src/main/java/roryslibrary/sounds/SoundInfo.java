@@ -1,12 +1,17 @@
 package roryslibrary.sounds;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 public class SoundInfo {
 	
+	@Getter
+	@Setter
 	private final Sound sound;
+	@Getter @Setter
 	private final float volume, pitch;
 	
 	public SoundInfo(Sound sound, float volume, float pitch) {
