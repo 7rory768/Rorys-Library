@@ -10,9 +10,9 @@ public class SoundInfo {
 	
 	@Getter
 	@Setter
-	private final Sound sound;
+	private Sound sound;
 	@Getter @Setter
-	private final float volume, pitch;
+	private float volume, pitch;
 	
 	public SoundInfo(Sound sound, float volume, float pitch) {
 		this.sound = sound;
