@@ -35,13 +35,13 @@ public class NumberUtil {
         boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
         return hasDecimal ? NumberUtil.setMaxDecimals((truncated / 10d), 1) + suffix : NumberUtil.setMaxDecimals((truncated / 10), 1) + suffix;
     }
-
-    public static String getCommaString(int number) {
+    
+    public static String getCommaString(long number) {
         String commaString = "" + number;
         for (int i = commaString.length() - 3; i > 0; i = i - 3) {
             commaString = commaString.substring(0, i) + "," + commaString.substring(i);
         }
-
+        
         return commaString;
     }
 
@@ -93,6 +93,33 @@ public class NumberUtil {
     public static boolean isNegativeDouble(String arg) {
         try {
             double i = Double.parseDouble(arg);
+            return i < 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+    
+    public static boolean isLong(String arg) {
+        try {
+            Long.parseLong(arg);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        return true;
+    }
+    
+    public static boolean isPositiveLong(String arg) {
+        try {
+            double i = Long.parseLong(arg);
+            return i >= 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+    
+    public static boolean isNegativeLong(String arg) {
+        try {
+            double i = Long.parseLong(arg);
             return i < 0;
         } catch (NumberFormatException e) {
             return false;
