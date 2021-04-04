@@ -209,7 +209,8 @@ public class TimeUtil {
 	
 	public static String formatTime(long seconds) {
 		String timeText = "";
-		seconds += 1L;
+		if (seconds < 0) seconds = 0L;
+		
 		if (seconds % (60 * 60 * 24 * 365) >= 0) {
 			int timecalc = (int) Math.floor(seconds / (60 * 60 * 24 * 365));
 			seconds = seconds % (60 * 60 * 24 * 365);
