@@ -43,7 +43,7 @@ public class ItemUtil {
 	public static ItemStack getItemStack(JavaPlugin plugin, String path) {
 		return getItemStack(plugin.getConfig(), path);
 	}
-
+	
 	public static ItemStack getItemStack(FileConfiguration config, String path) {
 		if (path.endsWith(".")) path = path.substring(0, path.length() - 1);
 		return getItemStack(config.getConfigurationSection(path));
@@ -187,27 +187,27 @@ public class ItemUtil {
 	
 	public static SkullMeta applyCustomHead(ItemMeta itemMeta, String value) {
 		try {
-			UUID uuid;
 			if (value.length() <= 16) {
-				uuid = SkinUtil.getUUIDFromName(value, false);
+				SkullMeta skullMeta = (SkullMeta) itemMeta;
+				skullMeta.setOwner(value);
+				return skullMeta;
 			} else {
-				uuid = UUID.fromString(value);
+				UUID uuid = UUID.fromString(value);
+				if (uuid != null) return applyCustomHead(itemMeta, uuid);
 			}
-			
-			if (uuid != null) return applyCustomHead(itemMeta, uuid);
 		} catch (Exception e) {
 			// Attempt to get skin value instead
 		}
 		
-		boolean customHead = false;
+		boolean isURL = false;
 		try {
 			new URL(value);
-			customHead = true;
+			isURL = true;
 		} catch (MalformedURLException var6) {
 		}
 		
 		GameProfile gameProfile = new GameProfile(UUID.randomUUID(), null);
-		gameProfile.getProperties().put("textures", new Property("textures", customHead ? SkinUtil.getSkinValue(value) : value));
+		gameProfile.getProperties().put("textures", new Property("textures", isURL ? SkinUtil.getSkinValue(value) : value));
 		
 		SkullMeta skullMeta = (SkullMeta) itemMeta;
 		try {
