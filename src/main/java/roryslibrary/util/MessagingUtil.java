@@ -56,20 +56,27 @@ public abstract class MessagingUtil {
 		this.finalPrefixFormatting = this.finalColor + this.finalFormat;
 	}
 	
-	public static String makeSpigotSafe(String arg) {
+	public static String makeSpigotSafe(String arg)
+	{
 		arg = MessagingUtil.format(arg);
 		
-		String color = null;
+		String        color   = null;
 		StringBuilder builder = new StringBuilder();
-		for (String word : arg.split("\\s")) {
-			if (word.startsWith("§")) color = arg.substring(0, 2);
-			else if (color != null) word = color + word;
+		for (String sentence : arg.split("\\n"))
+		{
+			for (String word : sentence.split("\\s"))
+			{
+				if (word.startsWith("§")) color = word.substring(0, 2);
+				else if (color != null) word = color + word;
+				
+				builder.append(word);
+				builder.append(" ");
+			}
 			
-			builder.append(word);
-			builder.append(" ");
+			if (builder.length() > 0) builder.delete(builder.length() - 1, builder.length());
+			builder.append("\n");
 		}
 		
-		if (builder.length() > 0) return builder.substring(0, builder.length() - 1);
 		return builder.toString();
 	}
 	
