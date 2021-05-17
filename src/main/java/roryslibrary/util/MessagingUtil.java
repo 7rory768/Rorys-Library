@@ -77,7 +77,7 @@ public abstract class MessagingUtil {
 			builder.append("\n");
 		}
 		
-		return builder.toString();
+		return builder.length() > 0 ? builder.substring(0, builder.length() - 2) : builder.toString();
 	}
 	
 	public String getString(String path) {
