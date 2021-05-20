@@ -2,6 +2,7 @@ package roryslibrary.util;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -31,6 +32,7 @@ import java.util.UUID;
  */
 public class ItemUtil {
 	
+	@Getter
 	private JavaPlugin plugin;
 	
 	public ItemUtil(JavaPlugin plugin) {
@@ -211,10 +213,6 @@ public class ItemUtil {
 		}
 	}
 	
-	public JavaPlugin getPlugin() {
-		return plugin;
-	}
-	
 	public static SkullMeta applyCustomHead(ItemMeta itemMeta, String value) {
 		try {
 			if (value.length() <= 16) {
@@ -249,15 +247,6 @@ public class ItemUtil {
 		}
 		
 		return skullMeta;
-	}
-	
-	
-	public static int getX(int slot) {
-		return slot % 9 + 1;
-	}
-	
-	public static int getY(int slot) {
-		return slot / 9 + 1;
 	}
 	
 	public static SkullMeta applyCustomHead(ItemMeta itemMeta, UUID uuid) {
@@ -381,16 +370,23 @@ public class ItemUtil {
 	}
 	
 	public static int getSlot(ConfigurationSection section) {
-		String path = section.getCurrentPath();
-		int xCord = section.getInt(path + "x-cord", -1);
-		int yCord = section.getInt(path + "y-cord", -1);
+		int xCord = section.getInt("x-cord", -1);
+		int yCord = section.getInt("y-cord", -1);
 		
-		if (xCord == -1 || yCord == -1) return section.getInt(path + "slot", 0);
+		if (xCord == -1 || yCord == -1) return section.getInt("slot", 0);
 		else return ItemUtil.getSlot(xCord, yCord);
 	}
 	
 	public static int getSlot(int xCord, int yCord) {
 		return ((yCord - 1) * 9) + xCord - 1;
+	}
+	
+	public static int getX(int slot) {
+		return slot % 9 + 1;
+	}
+	
+	public static int getY(int slot) {
+		return slot / 9 + 1;
 	}
 	
 }
