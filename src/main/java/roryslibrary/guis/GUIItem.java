@@ -1,12 +1,16 @@
 package roryslibrary.guis;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.inventory.ItemStack;
 
+@Getter
+@Setter
 public class GUIItem {
 	
+	private int slot;
 	private ItemStack item;
 	private ItemPurpose itemPurpose;
-	private int slot;
 	
 	public GUIItem(ItemStack item, ItemPurpose itemPurpose, int slot) {
 		this.item = item;
@@ -14,23 +18,8 @@ public class GUIItem {
 		this.slot = slot;
 	}
 	
-	public ItemStack getItem() {
-		return item;
-	}
-	
-	public void setItem(ItemStack item) {
+	public GUIItem(int slot, ItemStack item) {
 		this.item = item;
-	}
-
-	public ItemPurpose getItemPurpose() {
-		return itemPurpose;
-	}
-
-	public void setItemPurpose(ItemPurpose itemPurpose) {
-		this.itemPurpose = itemPurpose;
-	}
-	
-	public int getSlot() {
-		return slot;
+		this.slot = slot;
 	}
 }

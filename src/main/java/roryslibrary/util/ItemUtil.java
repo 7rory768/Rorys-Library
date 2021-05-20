@@ -16,6 +16,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import roryslibrary.guis.GUIItem;
 
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
@@ -36,6 +37,30 @@ public class ItemUtil {
 		this.plugin = plugin;
 	}
 	
+	public GUIItem getGUIItem(String path) {
+		path = path.substring(path.startsWith(".") ? 1 : 0, path.length() - (path.endsWith(".") ? 1 : 0));
+		return getGUIItem(plugin.getConfig().getConfigurationSection(path));
+	}
+	
+	public static GUIItem getGUIItem(JavaPlugin plugin, String path) {
+		path = path.substring(path.startsWith(".") ? 1 : 0, path.length() - (path.endsWith(".") ? 1 : 0));
+		return getGUIItem(plugin.getConfig().getConfigurationSection(path));
+	}
+	
+	public static GUIItem getGUIItem(FileConfiguration config, String path) {
+		path = path.substring(path.startsWith(".") ? 1 : 0, path.length() - (path.endsWith(".") ? 1 : 0));
+		return getGUIItem(config.getConfigurationSection(path));
+	}
+	
+	public static GUIItem getGUIItem(ConfigurationSection section, String path) {
+		path = path.substring(path.startsWith(".") ? 1 : 0, path.length() - (path.endsWith(".") ? 1 : 0));
+		return getGUIItem(section.getConfigurationSection(path));
+	}
+	
+	public static GUIItem getGUIItem(ConfigurationSection section) {
+		return new GUIItem(getSlot(section), getItemStack(section));
+	}
+	
 	public ItemStack getItemStack(String path) {
 		return ItemUtil.getItemStack(this.plugin.getConfig(), path);
 	}
@@ -47,6 +72,11 @@ public class ItemUtil {
 	public static ItemStack getItemStack(FileConfiguration config, String path) {
 		if (path.endsWith(".")) path = path.substring(0, path.length() - 1);
 		return getItemStack(config.getConfigurationSection(path));
+	}
+	
+	public static ItemStack getItemStack(ConfigurationSection section, String path) {
+		path = path.substring(path.startsWith(".") ? 1 : 0, path.length() - (path.endsWith(".") ? 1 : 0));
+		return getItemStack(section.getConfigurationSection(path));
 	}
 	
 	public static ItemStack getItemStack(ConfigurationSection section) {
@@ -339,16 +369,24 @@ public class ItemUtil {
 	}
 	
 	public static int getSlot(FileConfiguration config, String path) {
-		if (!path.endsWith(".")) {
-			path += ".";
-		}
+		path = path.substring(path.startsWith(".") ? 1 : 0, path.length() - (path.endsWith(".") ? 1 : 0));
 		
-		int xCord = config.getInt(path + "x-cord", -1);
-		int yCord = config.getInt(path + "y-cord", -1);
-		if (xCord == -1 || yCord == -1) {
-			return config.getInt(path + "slot", 0);
-		}
-		return ItemUtil.getSlot(xCord, yCord);
+		return getSlot(config.getConfigurationSection(path));
+	}
+	
+	public static int getSlot(ConfigurationSection section, String path) {
+		path = path.substring(path.startsWith(".") ? 1 : 0, path.length() - (path.endsWith(".") ? 1 : 0));
+		
+		return getSlot(section.getConfigurationSection(path));
+	}
+	
+	public static int getSlot(ConfigurationSection section) {
+		String path = section.getCurrentPath();
+		int xCord = section.getInt(path + "x-cord", -1);
+		int yCord = section.getInt(path + "y-cord", -1);
+		
+		if (xCord == -1 || yCord == -1) return section.getInt(path + "slot", 0);
+		else return ItemUtil.getSlot(xCord, yCord);
 	}
 	
 	public static int getSlot(int xCord, int yCord) {
