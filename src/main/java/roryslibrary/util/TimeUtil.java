@@ -7,38 +7,42 @@ import org.bukkit.configuration.file.FileConfiguration;
  */
 public class TimeUtil {
 	
-	private static String second = "second";
-	private static String seconds = "seconds";
-	private static String minute = "minute";
-	private static String minutes = "minutes";
-	private static String hour = "hour";
-	private static String hours = "hours";
-	private static String day = "day";
-	private static String days = "days";
-	private static String week = "week";
-	private static String weeks = "weeks";
-	private static String month = "month";
-	private static String months = "months";
-	private static String year = "year";
-	private static String years = "years";
-	private static String and = "and";
+	private static String second = " second";
+	private static String seconds = " seconds";
+	private static String minute = " minute";
+	private static String minutes = " minutes";
+	private static String hour = " hour";
+	private static String hours = " hours";
+	private static String day = " day";
+	private static String days = " days";
+	private static String week = " week";
+	private static String weeks = " weeks";
+	private static String month = " month";
+	private static String months = " months";
+	private static String year = " year";
+	private static String years = " years";
+	private static String seperator = ", ";
+	private static String and = " and ";
 	
 	public static void refreshUnitStrings(FileConfiguration config, String path) {
-		TimeUtil.setSecond(config.getString(path + "second", "second"));
-		TimeUtil.setSeconds(config.getString(path + "seconds", "seconds"));
-		TimeUtil.setMinute(config.getString(path + "minute", "minute"));
-		TimeUtil.setMinutes(config.getString(path + "minutes", "minutes"));
-		TimeUtil.setHour(config.getString(path + "hour", "hour"));
-		TimeUtil.setHours(config.getString(path + "hours", "hours"));
-		TimeUtil.setDay(config.getString(path + "day", "day"));
-		TimeUtil.setDays(config.getString(path + "days", "days"));
-		TimeUtil.setWeek(config.getString(path + "week", "week"));
-		TimeUtil.setWeeks(config.getString(path + "weeks", "weeks"));
-		TimeUtil.setMonth(config.getString(path + "month", "month"));
-		TimeUtil.setMonths(config.getString(path + "months", "months"));
-		TimeUtil.setYear(config.getString(path + "year", "year"));
-		TimeUtil.setYears(config.getString(path + "years", "years"));
-		TimeUtil.setAnd(config.getString(path + "and", "and"));
+		if (!path.contains(".")) path = path + ".";
+		
+		TimeUtil.setSecond(config.getString(path + "second", " second"));
+		TimeUtil.setSeconds(config.getString(path + "seconds", " seconds"));
+		TimeUtil.setMinute(config.getString(path + "minute", " minute"));
+		TimeUtil.setMinutes(config.getString(path + "minutes", " minutes"));
+		TimeUtil.setHour(config.getString(path + "hour", " hour"));
+		TimeUtil.setHours(config.getString(path + "hours", " hours"));
+		TimeUtil.setDay(config.getString(path + "day", " day"));
+		TimeUtil.setDays(config.getString(path + "days", " days"));
+		TimeUtil.setWeek(config.getString(path + "week", " week"));
+		TimeUtil.setWeeks(config.getString(path + "weeks", " weeks"));
+		TimeUtil.setMonth(config.getString(path + "month", " month"));
+		TimeUtil.setMonths(config.getString(path + "months", " months"));
+		TimeUtil.setYear(config.getString(path + "year", " year"));
+		TimeUtil.setYears(config.getString(path + "years", " years"));
+		TimeUtil.setSeperator(config.getString(path + "seperator", ", "));
+		TimeUtil.setAnd(config.getString(path + "and", " and "));
 	}
 	
 	public static void setSecond(String second) {
@@ -95,6 +99,10 @@ public class TimeUtil {
 	
 	public static void setYears(String years) {
 		TimeUtil.years = years;
+	}
+	
+	public static void setSeperator(String seperator) {
+		TimeUtil.seperator = seperator;
 	}
 	
 	public static void setAnd(String and) {
@@ -216,9 +224,9 @@ public class TimeUtil {
 			seconds = seconds % (60 * 60 * 24 * 365);
 			if (timecalc != 0) {
 				if (timecalc == 1) {
-					timeText += timecalc + " " + TimeUtil.year + ", ";
+					timeText += timecalc + TimeUtil.year + TimeUtil.seperator;
 				} else {
-					timeText += timecalc + " " + TimeUtil.years + ", ";
+					timeText += timecalc + TimeUtil.years + TimeUtil.seperator;
 				}
 			}
 		}
@@ -228,9 +236,9 @@ public class TimeUtil {
 			seconds = seconds % (30 * 24 * 60 * 60);
 			if (timecalc != 0) {
 				if (timecalc == 1) {
-					timeText += timecalc + " " + TimeUtil.month + ", ";
+					timeText += timecalc + TimeUtil.month + TimeUtil.seperator;
 				} else {
-					timeText += timecalc + " " + TimeUtil.months + ", ";
+					timeText += timecalc + TimeUtil.months + TimeUtil.seperator;
 				}
 			}
 		}
@@ -240,9 +248,9 @@ public class TimeUtil {
 			seconds = seconds % (60 * 60 * 24 * 7);
 			if (timecalc != 0) {
 				if (timecalc == 1) {
-					timeText += timecalc + " " + TimeUtil.week + ", ";
+					timeText += timecalc + TimeUtil.week + TimeUtil.seperator;
 				} else {
-					timeText += timecalc + " " + TimeUtil.weeks + ", ";
+					timeText += timecalc + TimeUtil.weeks + TimeUtil.seperator;
 				}
 			}
 		}
@@ -252,9 +260,9 @@ public class TimeUtil {
 			seconds = seconds % (60 * 60 * 24);
 			if (timecalc != 0) {
 				if (timecalc == 1) {
-					timeText += timecalc + " " + TimeUtil.day + ", ";
+					timeText += timecalc + TimeUtil.day + TimeUtil.seperator;
 				} else {
-					timeText += timecalc + " " + TimeUtil.days + ", ";
+					timeText += timecalc + TimeUtil.days + TimeUtil.seperator;
 				}
 			}
 		}
@@ -264,9 +272,9 @@ public class TimeUtil {
 			seconds = seconds % (60 * 60);
 			if (timecalc != 0) {
 				if (timecalc == 1) {
-					timeText += timecalc + " " + TimeUtil.hour + ", ";
+					timeText += timecalc + TimeUtil.hour + TimeUtil.seperator;
 				} else {
-					timeText += timecalc + " " + TimeUtil.hours + ", ";
+					timeText += timecalc + TimeUtil.hours + TimeUtil.seperator;
 				}
 			}
 		}
@@ -276,28 +284,28 @@ public class TimeUtil {
 			seconds = seconds % (60);
 			if (timecalc != 0) {
 				if (timecalc == 1) {
-					timeText += timecalc + " " + TimeUtil.minute + ", ";
+					timeText += timecalc + TimeUtil.minute + TimeUtil.seperator;
 				} else {
-					timeText += timecalc + " " + TimeUtil.minutes + ", ";
+					timeText += timecalc + TimeUtil.minutes + TimeUtil.seperator;
 				}
 			}
 		}
 		
 		if (seconds > 0) {
 			if (seconds == 1) {
-				timeText += seconds + " " + TimeUtil.second + ", ";
+				timeText += seconds + TimeUtil.second + TimeUtil.seperator;
 			} else {
-				timeText += seconds + " " + TimeUtil.seconds + ", ";
+				timeText += seconds + TimeUtil.seconds + TimeUtil.seperator;
 			}
 		}
 		if (timeText.length() > 0) {
-			timeText = timeText.substring(0, timeText.length() - 2);
-			int lastComma = timeText.lastIndexOf(",");
-			if (lastComma != -1) {
-				timeText = timeText.substring(0, lastComma) + " " + TimeUtil.and + " " + timeText.substring(lastComma + 2, timeText.length());
+			timeText = timeText.substring(0, timeText.length() - TimeUtil.seperator.length());
+			int lastSeperator = timeText.lastIndexOf(TimeUtil.seperator);
+			if (lastSeperator != -1) {
+				timeText = timeText.substring(0, lastSeperator) + TimeUtil.and + timeText.substring(lastSeperator + TimeUtil.seperator.length(), timeText.length());
 			}
 		} else {
-			timeText = "0 " + TimeUtil.seconds;
+			timeText = "0" + TimeUtil.seconds;
 		}
 		return timeText;
 	}
