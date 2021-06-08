@@ -8,64 +8,60 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import roryslibrary.sounds.SoundInfo;
 
-public class SoundUtil {
+public class SoundUtil
+{
 	
-	@Deprecated
-	public static void playSound(Player player, JavaPlugin plugin, String path) {
+	public static void playSound(Player player, JavaPlugin plugin, String path)
+	{
 		playSound(player, plugin.getConfig(), path);
 	}
 	
-	@Deprecated
-	public static void playSound(Player player, FileConfiguration config, String path) {
-		if (!path.endsWith(".")) {
-			path += ".";
-		}
+	public static void playSound(Player player, FileConfiguration config, String path)
+	{
+		if (path.endsWith(".")) path = path.substring(0, path.length() - 1);
 		
-		Sound sound = null;
-		String soundString = config.getString(path + "sound").toUpperCase();
-		try {
-			sound = Sound.valueOf(soundString);
-		} catch (IllegalArgumentException e) {
-			if (soundString.equals("BLOCK_NOTE_BLOCK_PLING")) {
-				sound = Sound.valueOf("NOTE_PLING");
-			} else if (soundString.equals("ENTITY_PLAYER_LEVELUP")) {
-				sound = Sound.valueOf("LEVEL_UP");
-			} else if (soundString.equals("BLOCK_ANVIL_PLACE")) {
-				sound = Sound.valueOf("ANVIL_LAND");
-			}
-		}
-		player.playSound(player.getLocation(), sound, Float.valueOf(config.getString(path + "volume", "1.0")), Float.valueOf(config.getString(path + "pitch", "1.0")));
+		playSound(player, config.getConfigurationSection(path));
 	}
 	
-	public static SoundInfo getSoundInfo(JavaPlugin plugin, String path) {
+	public static void playSound(Player player, ConfigurationSection section)
+	{
+		SoundInfo soundInfo = getSoundInfo(section);
+		if (soundInfo != null) soundInfo.play(player);
+	}
+	
+	public static SoundInfo getSoundInfo(JavaPlugin plugin, String path)
+	{
 		return getSoundInfo(plugin.getConfig(), path);
 	}
 	
-	public static SoundInfo getSoundInfo(FileConfiguration config, String path) {
+	public static SoundInfo getSoundInfo(FileConfiguration config, String path)
+	{
 		if (path.endsWith(".")) path = path.substring(0, path.length() - 1);
 		return getSoundInfo(config.getConfigurationSection(path));
 	}
 	
-	public static SoundInfo getSoundInfo(ConfigurationSection section) {
-		Sound sound = null;
+	public static SoundInfo getSoundInfo(ConfigurationSection section)
+	{
+		Sound  sound;
 		String soundString = section.getString("sound").toUpperCase();
-		try {
+		
+		try
+		{
 			sound = Sound.valueOf(soundString);
-		} catch (IllegalArgumentException e) {
+		} catch (IllegalArgumentException e)
+		{
 			if (soundString.equals("BLOCK_NOTE_BLOCK_PLING")) sound = Sound.valueOf("NOTE_PLING");
 			else if (soundString.equals("ENTITY_PLAYER_LEVELUP")) sound = Sound.valueOf("LEVEL_UP");
 			else if (soundString.equals("BLOCK_ANVIL_PLACE")) sound = Sound.valueOf("ANVIL_LAND");
 			else
 				Bukkit.getLogger().severe("[SoundUtil] Failed to load sound `" + soundString + "` @ " + section.getCurrentPath());
+			
+			return null;
 		}
 		
-		if (sound != null) {
-			float volume = Float.valueOf(section.getString("volume", "1.0"));
-			float pitch = Float.valueOf(section.getString("pitch", "1.0"));
-			return new SoundInfo(sound, volume, pitch);
-		}
-		
-		return null;
+		float volume = Float.parseFloat(section.getString("volume", "1.0"));
+		float pitch  = Float.parseFloat(section.getString("pitch", "1.0"));
+		return new SoundInfo(sound, volume, pitch);
 	}
 	
 }

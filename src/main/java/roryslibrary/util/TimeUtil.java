@@ -311,7 +311,7 @@ public class TimeUtil {
 	}
 	
 	public static long convertToSeconds(String time) {
-		time = time.toLowerCase();
+		time = time.toLowerCase().trim();
 		long seconds = 0;
 		int index = 0;
 		if (time.equals("") || !((time.contains("s") || time.contains("m") || time.contains("h") || time.contains("d") || time.contains("w") || time.contains("y")))) {
