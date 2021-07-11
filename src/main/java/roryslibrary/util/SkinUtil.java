@@ -53,9 +53,7 @@ public class SkinUtil {
 			return player.getName();
 		} else {
 			player = Bukkit.getOfflinePlayer(uuid);
-			if (player != null && player.hasPlayedBefore()) {
-				return player.getName();
-			}
+			if (player.hasPlayedBefore()) return player.getName();
 		}
 		
 		if (checkAPI) {

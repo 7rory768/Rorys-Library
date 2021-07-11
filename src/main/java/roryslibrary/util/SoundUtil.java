@@ -42,8 +42,10 @@ public class SoundUtil
 	
 	public static SoundInfo getSoundInfo(ConfigurationSection section)
 	{
+		if (section == null) return null;
+		
 		Sound  sound;
-		String soundString = section.getString("sound").toUpperCase();
+		String soundString = section.getString("sound", "NULL").toUpperCase();
 		
 		try
 		{
