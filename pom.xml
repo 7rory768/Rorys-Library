@@ -53,11 +53,6 @@
                                         <include>org/jsoup/parser/Parser.class</include>
                                         <include>org/jsoup/select/*.class</include>
                                     </includes>
-                                    <!-->import org.jsoup.helper.StringUtil;
-import org.jsoup.helper.Validate;
-import org.jsoup.parser.Tag;
-import org.jsoup.parser.Parser;
-import org.jsoup.select.*;<!-->
                                 </filter>
                             </filters>
                         </configuration>

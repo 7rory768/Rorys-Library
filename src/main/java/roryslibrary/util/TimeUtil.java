@@ -311,19 +311,20 @@ public class TimeUtil {
 	}
 	
 	public static long convertToSeconds(String time) {
-		time = time.toLowerCase().trim();
+		time = time.toLowerCase().replace(" ", "").trim();
 		long seconds = 0;
 		int index = 0;
-		if (time.equals("") || !((time.contains("s") || time.contains("m") || time.contains("h") || time.contains("d") || time.contains("w") || time.contains("y")))) {
+		
+		if (time.equals("") || !((time.contains("s") || time.contains("m") || time.contains("h") || time.contains("d") || time.contains("w") || time.contains("y"))))
 			return -1;
-		}
+		
 		while (!time.equals("")) {
 			char ch = time.charAt(index);
 			switch (ch) {
 				case 's':
-					if (!NumberUtil.isInt(time.substring(0, index))) {
+					if (!NumberUtil.isInt(time.substring(0, index)))
 						return -1;
-					}
+					
 					seconds += Integer.parseInt(time.substring(0, index));
 					if (time.length() > index + 1) {
 						time = time.substring(index + 1);
@@ -333,9 +334,9 @@ public class TimeUtil {
 					}
 					break;
 				case 'm':
-					if (!NumberUtil.isInt(time.substring(0, index))) {
+					if (!NumberUtil.isInt(time.substring(0, index)))
 						return -1;
-					}
+					
 					if (time.charAt(index + 1 >= time.length() ? index : index + 1) == 'o') {
 						seconds += Integer.parseInt(time.substring(0, index)) * 30 * 24 * 60 * 60;
 						if (time.length() > index + 2) {
@@ -354,9 +355,9 @@ public class TimeUtil {
 					index = 0;
 					break;
 				case 'h':
-					if (!NumberUtil.isInt(time.substring(0, index))) {
+					if (!NumberUtil.isInt(time.substring(0, index)))
 						return -1;
-					}
+					
 					seconds += Integer.parseInt(time.substring(0, index)) * 60 * 60;
 					if (time.length() > index + 1) {
 						time = time.substring(index + 1);
@@ -366,9 +367,9 @@ public class TimeUtil {
 					}
 					break;
 				case 'd':
-					if (!NumberUtil.isInt(time.substring(0, index))) {
+					if (!NumberUtil.isInt(time.substring(0, index)))
 						return -1;
-					}
+					
 					seconds += Integer.parseInt(time.substring(0, index)) * 60 * 60 * 24;
 					if (time.length() > index + 1) {
 						time = time.substring(index + 1);
@@ -378,9 +379,9 @@ public class TimeUtil {
 					}
 					break;
 				case 'w':
-					if (!NumberUtil.isInt(time.substring(0, index))) {
+					if (!NumberUtil.isInt(time.substring(0, index)))
 						return -1;
-					}
+					
 					seconds += Integer.parseInt(time.substring(0, index)) * 60 * 60 * 24 * 7;
 					if (time.length() > index + 1) {
 						time = time.substring(index + 1);
@@ -390,9 +391,9 @@ public class TimeUtil {
 					}
 					break;
 				case 'y':
-					if (!NumberUtil.isInt(time.substring(0, index))) {
+					if (!NumberUtil.isInt(time.substring(0, index)))
 						return -1;
-					}
+					
 					seconds += Integer.parseInt(time.substring(0, index)) * 60 * 60 * 24 * 365;
 					if (time.length() > index + 1) {
 						time = time.substring(index + 1);
