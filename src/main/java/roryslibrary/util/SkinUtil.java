@@ -18,16 +18,28 @@ public class SkinUtil {
 	private static JsonParser parser = new JsonParser();
 	
 	private static HashMap<String, String> skinCache = new HashMap<>();
+	private static HashMap<UUID, String> nameCache = new HashMap<>();
+	private static HashMap<String, UUID> uuidCache = new HashMap<>();
+	
+	public static UUID getUUIDFromName(String name) {
+		return getUUIDFromName(name, false);
+	}
 	
 	public static UUID getUUIDFromName(String name, boolean checkAPI) {
+		if (uuidCache.containsKey(name.toLowerCase())) return uuidCache.get(name.toLowerCase());
+		
 		UUID uuid = null;
 		OfflinePlayer player = Bukkit.getPlayer(name);
 		if (player != null) {
+			uuidCache.putIfAbsent(player.getName().toLowerCase(), uuid);
+			nameCache.putIfAbsent(uuid, player.getName());
 			return player.getUniqueId();
 		} else {
 			player = Bukkit.getOfflinePlayer(name);
 			
 			if (player.hasPlayedBefore()) {
+				uuidCache.putIfAbsent(player.getName().toLowerCase(), uuid);
+				nameCache.putIfAbsent(uuid, player.getName());
 				return player.getUniqueId();
 			}
 		}
@@ -36,8 +48,16 @@ public class SkinUtil {
 			try {
 				URL url_0 = new URL("https://api.mojang.com/users/profiles/minecraft/" + name);
 				InputStreamReader reader_0 = new InputStreamReader(url_0.openStream());
-				String uuidString = SkinUtil.parser.parse(reader_0).getAsJsonObject().get("id").getAsString();
+				JsonObject json = SkinUtil.parser.parse(reader_0).getAsJsonObject();
+				
+				String uuidString = json.get("id").getAsString();
 				uuidString = uuidString.substring(0, 8) + "-" + uuidString.substring(8, 12) + "-" + uuidString.substring(12, 16) + "-" + uuidString.substring(16, 20) + "-" + uuidString.substring(20);
+				
+				name = json.get("name").getAsString();
+				
+				uuidCache.put(name.toLowerCase(), uuid);
+				nameCache.put(uuid, name);
+				
 				return UUID.fromString(uuidString);
 			} catch (Exception e) {
 				//
@@ -47,13 +67,26 @@ public class SkinUtil {
 		return null;
 	}
 	
+	public static String getName(UUID uuid) {
+		return getName(uuid, false);
+	}
+	
 	public static String getName(UUID uuid, boolean checkAPI) {
+		if (nameCache.containsKey(uuid)) return nameCache.get(uuid);
+		
 		OfflinePlayer player = Bukkit.getPlayer(uuid);
 		if (player != null) {
+			uuidCache.put(player.getName().toLowerCase(), uuid);
+			nameCache.put(uuid, player.getName());
 			return player.getName();
 		} else {
 			player = Bukkit.getOfflinePlayer(uuid);
-			if (player.hasPlayedBefore()) return player.getName();
+			
+			if (player.hasPlayedBefore()) {
+				uuidCache.put(player.getName().toLowerCase(), uuid);
+				nameCache.put(uuid, player.getName());
+				return player.getName();
+			}
 		}
 		
 		if (checkAPI) {
@@ -62,7 +95,13 @@ public class SkinUtil {
 				URL url_1 = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + uuidStr + "?unsigned=false");
 				InputStreamReader reader_1 = new InputStreamReader(url_1.openStream());
 				JsonObject jsonObject = new JsonParser().parse(reader_1).getAsJsonObject();
-				return jsonObject.get("name").getAsString();
+				
+				String name = jsonObject.get("name").getAsString();
+				
+				uuidCache.put(name.toLowerCase(), uuid);
+				nameCache.put(uuid, name);
+				
+				return name;
 			} catch (Exception e) {
 				//
 			}
