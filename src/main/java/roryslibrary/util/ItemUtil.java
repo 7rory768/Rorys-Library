@@ -3,8 +3,8 @@ package roryslibrary.util;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import lombok.Getter;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -293,7 +293,7 @@ public class ItemUtil {
 		for (int invSlot = 0; invSlot < inventory.getSize(); invSlot++) {
 			ItemStack invItem = inventory.getItem(invSlot);
 			if (invItem == null || invItem.getType() == Material.AIR) {
-				space = itemSize;
+				space += item.getMaxStackSize();
 			} else if (invItem.isSimilar(item)) {
 				space += Math.min(invItem.getMaxStackSize() - invItem.getAmount(), itemSize);
 			}

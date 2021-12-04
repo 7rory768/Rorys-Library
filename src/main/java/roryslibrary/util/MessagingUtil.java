@@ -2,11 +2,14 @@ package roryslibrary.util;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Rory on 6/22/2017.
@@ -16,6 +19,7 @@ public abstract class MessagingUtil {
 	@Setter
 	@Getter
 	private String prefix = "", finalPrefixFormatting = "", finalColor, finalFormat, firstColor;
+	private static Pattern HEX_PATTERN = Pattern.compile("#[A-Fa-f0-9]{6}");
 	
 	public void reload() {
 		updatePrefix();
@@ -25,7 +29,7 @@ public abstract class MessagingUtil {
 	public abstract FileConfiguration getConfig();
 	
 	public void updatePrefix() {
-		setPrefix(MessagingUtil.format(getConfig().getString("prefix")));
+		this.prefix = MessagingUtil.format(getConfig().getString("prefix"));
 		this.updatePrefixFormatting();
 	}
 	
@@ -56,16 +60,13 @@ public abstract class MessagingUtil {
 		this.finalPrefixFormatting = this.finalColor + this.finalFormat;
 	}
 	
-	public static String makeSpigotSafe(String arg)
-	{
+	public static String makeSpigotSafe(String arg) {
 		arg = MessagingUtil.format(arg);
 		
-		String        color   = null;
+		String color = null;
 		StringBuilder builder = new StringBuilder();
-		for (String sentence : arg.split("\\n"))
-		{
-			for (String word : sentence.split("\\s"))
-			{
+		for (String sentence : arg.split("\\n")) {
+			for (String word : sentence.split("\\s")) {
 				if (word.startsWith("§")) color = word.substring(0, 2);
 				else if (color != null) word = color + word;
 				
@@ -181,11 +182,20 @@ public abstract class MessagingUtil {
 	}
 	
 	public static String format(String msg, String... placeholders) {
+		if (Version.isRunningMinimum(Version.v1_13)) {
+			Matcher matcher = HEX_PATTERN.matcher(msg);
+			
+			while (matcher.find()) {
+				String match = matcher.group();
+				msg = msg.replace(match, ChatColor.of(match).toString());
+			}
+		}
+		
 		return StringEscapeUtils.unescapeJava(ChatColor.translateAlternateColorCodes('&', replacePlaceholders(msg, placeholders)));
 	}
 	
 	public String placeholders(String msg, String... placeholders) {
-		return StringEscapeUtils.unescapeJava(ChatColor.translateAlternateColorCodes('&', replacePlaceholders(msg, placeholders).replace("{PREFIX}", this.prefix)));
+		return format(msg, placeholders).replace("{PREFIX}", this.prefix);
 	}
 	
 }
