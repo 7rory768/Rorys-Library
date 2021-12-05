@@ -18,8 +18,8 @@ public abstract class MessagingUtil {
 	
 	@Setter
 	@Getter
-	private String prefix = "", finalPrefixFormatting = "", finalColor, finalFormat, firstColor;
-	private static Pattern HEX_PATTERN = Pattern.compile("#[A-Fa-f0-9]{6}");
+	protected String rawPrefix, prefix = "", finalPrefixFormatting = "", finalColor, finalFormat, firstColor;
+	protected static Pattern HEX_PATTERN = Pattern.compile("#[A-Fa-f0-9]{6}");
 	
 	public void reload() {
 		updatePrefix();
@@ -29,7 +29,8 @@ public abstract class MessagingUtil {
 	public abstract FileConfiguration getConfig();
 	
 	public void updatePrefix() {
-		this.prefix = MessagingUtil.format(getConfig().getString("prefix"));
+		this.rawPrefix = getConfig().getString("prefix");
+		this.prefix = MessagingUtil.format(rawPrefix);
 		this.updatePrefixFormatting();
 	}
 	
@@ -37,16 +38,37 @@ public abstract class MessagingUtil {
 		this.finalColor = "";
 		this.finalFormat = "";
 		this.firstColor = "";
-		if (this.prefix.length() > 1) {
-			for (int index = this.prefix.length(); index > 1; index--) {
-				String bit = this.prefix.substring(index - 2, index);
-				if (bit.startsWith("§")) {
+		
+		Matcher matcher = HEX_PATTERN.matcher(rawPrefix);
+		int firstHexIndex = -1, finalHexIndex = -1;
+		
+		while (matcher.find()) {
+			if (firstColor.isEmpty()) {
+				firstColor = matcher.group();
+				firstHexIndex = matcher.start();
+			}
+			
+			finalColor = matcher.group();
+			finalHexIndex = matcher.start();
+		}
+		
+		if (this.rawPrefix.length() > 1) {
+			for (int index = this.rawPrefix.length(); index > 1; index--) {
+				
+				if (index == firstHexIndex || index == finalHexIndex) continue;
+				
+				String bit = this.rawPrefix.substring(index - 2, index);
+				if (bit.startsWith("§") || bit.startsWith("&")) {
 					int chNum = bit.toLowerCase().charAt(1);
 					if ((97 <= chNum && chNum <= 102) || (48 <= chNum && chNum <= 57) || chNum == 114) {
 						if (finalColor.equals("")) {
 							finalColor = bit;
+						} else if (finalHexIndex > -1 && index > finalHexIndex) {
+							finalColor = bit;
+							finalHexIndex = -1;
 						}
-						firstColor = bit;
+						
+						if (firstHexIndex == -1 || index < firstHexIndex) firstColor = bit;
 					}
 					if (107 <= chNum && chNum <= 112) {
 						if (finalFormat.equals("")) {
@@ -58,6 +80,35 @@ public abstract class MessagingUtil {
 			}
 		}
 		this.finalPrefixFormatting = this.finalColor + this.finalFormat;
+	}
+	
+	public static String getFirstColor(String msg) {
+		String firstColor = "";
+		int firstHexIndex = -1;
+		
+		Matcher matcher = HEX_PATTERN.matcher(msg);
+		
+		if (matcher.find()) {
+			firstColor = matcher.group();
+			firstHexIndex = matcher.start();
+		}
+		
+		if (msg.length() > 1) {
+			for (int index = msg.length(); index > 1; index--) {
+				if (index == firstHexIndex) continue;
+				
+				String bit = msg.substring(index - 2, index);
+				if (bit.startsWith("§") || bit.startsWith("&")) {
+					int chNum = bit.toLowerCase().charAt(1);
+					if ((97 <= chNum && chNum <= 102) || (48 <= chNum && chNum <= 57) || chNum == 114) {
+						if (firstHexIndex == -1 || index < firstHexIndex)
+							firstColor = bit;
+					}
+				}
+			}
+		}
+		
+		return firstColor;
 	}
 	
 	public static String makeSpigotSafe(String arg) {
