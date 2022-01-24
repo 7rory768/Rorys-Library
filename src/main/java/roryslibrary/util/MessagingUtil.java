@@ -111,6 +111,40 @@ public abstract class MessagingUtil {
 		return firstColor;
 	}
 	
+	public static String getLastColor(String msg) {
+		String finalColor = "";
+		int finalHexIndex = -1;
+		
+		Matcher matcher = HEX_PATTERN.matcher(msg);
+		
+		while (matcher.find()) {
+			finalColor = matcher.group();
+			finalHexIndex = matcher.start();
+		}
+		
+		if (msg.length() > 1) {
+			for (int index = msg.length(); index > 1; index--) {
+				
+				if (index == finalHexIndex) continue;
+				
+				String bit = msg.substring(index - 2, index);
+				if (bit.startsWith("§") || bit.startsWith("&")) {
+					int chNum = bit.toLowerCase().charAt(1);
+					if ((97 <= chNum && chNum <= 102) || (48 <= chNum && chNum <= 57) || chNum == 114) {
+						if (finalColor.equals("")) {
+							finalColor = bit;
+						} else if (finalHexIndex > -1 && index > finalHexIndex) {
+							finalColor = bit;
+							finalHexIndex = -1;
+						}
+					}
+				}
+			}
+		}
+		
+		return finalColor;
+	}
+	
 	public static String makeSpigotSafe(String arg) {
 		arg = MessagingUtil.format(arg);
 		
