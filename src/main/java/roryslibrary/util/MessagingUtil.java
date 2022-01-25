@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -287,6 +288,13 @@ public abstract class MessagingUtil {
 		}
 		
 		return StringEscapeUtils.unescapeJava(ChatColor.translateAlternateColorCodes('&', replacePlaceholders(msg, placeholders)));
+	}
+	
+	public static List<String> format(List<String> msg, String... placeholders) {
+		for (int i = msg.size() - 1; i >= 0; i--)
+			msg.add(i, format(msg.remove(i), placeholders));
+		
+		return msg;
 	}
 	
 	public String placeholders(String msg, String... placeholders) {
