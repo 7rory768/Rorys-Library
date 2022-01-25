@@ -20,6 +20,16 @@ public abstract class MessagingUtil {
 	@Getter
 	protected String rawPrefix, prefix = "", finalPrefixFormatting = "", finalColor, finalFormat, firstColor;
 	protected static Pattern HEX_PATTERN = Pattern.compile("#[A-Fa-f0-9]{6}");
+	protected static boolean supportsHex;
+	
+	static {
+		try {
+			Class.forName("net.minecraft.server.v1_8_R3.ChatHexColor");
+			supportsHex = true;
+		} catch (Exception e) {
+			supportsHex = Version.isRunningMinimum(Version.v1_13);
+		}
+	}
 	
 	public void reload() {
 		updatePrefix();
@@ -267,7 +277,7 @@ public abstract class MessagingUtil {
 	}
 	
 	public static String format(String msg, String... placeholders) {
-		if (Version.isRunningMinimum(Version.v1_13)) {
+		if (supportsHex) {
 			Matcher matcher = HEX_PATTERN.matcher(msg);
 			
 			while (matcher.find()) {
