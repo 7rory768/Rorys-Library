@@ -216,13 +216,18 @@ public class TimeUtil {
 	}
 	
 	public static String formatTime(long seconds) {
+		return formatTime(seconds, Integer.MAX_VALUE);
+	}
+	
+	public static String formatTime(long seconds, int numberOfUnits) {
 		String timeText = "";
 		if (seconds < 0) seconds = 0L;
+		int units = 0;
 		
 		if (seconds % (60 * 60 * 24 * 365) >= 0) {
 			int timecalc = (int) Math.floor(seconds / (60 * 60 * 24 * 365));
 			seconds = seconds % (60 * 60 * 24 * 365);
-			if (timecalc != 0) {
+			if (timecalc != 0 && units++ < numberOfUnits) {
 				if (timecalc == 1) {
 					timeText += timecalc + TimeUtil.year + TimeUtil.seperator;
 				} else {
@@ -234,7 +239,7 @@ public class TimeUtil {
 		if (seconds % (30 * 24 * 60 * 60) >= 0) {
 			int timecalc = (int) Math.floor(seconds / (30 * 24 * 60 * 60));
 			seconds = seconds % (30 * 24 * 60 * 60);
-			if (timecalc != 0) {
+			if (timecalc != 0 && units++ < numberOfUnits) {
 				if (timecalc == 1) {
 					timeText += timecalc + TimeUtil.month + TimeUtil.seperator;
 				} else {
@@ -246,7 +251,7 @@ public class TimeUtil {
 		if (seconds % (60 * 60 * 24 * 7) >= 0) {
 			int timecalc = (int) Math.floor(seconds / (60 * 60 * 24 * 7));
 			seconds = seconds % (60 * 60 * 24 * 7);
-			if (timecalc != 0) {
+			if (timecalc != 0 && units++ < numberOfUnits) {
 				if (timecalc == 1) {
 					timeText += timecalc + TimeUtil.week + TimeUtil.seperator;
 				} else {
@@ -258,7 +263,7 @@ public class TimeUtil {
 		if (seconds % (60 * 60 * 24) >= 0) {
 			int timecalc = (int) Math.floor(seconds / (60 * 60 * 24));
 			seconds = seconds % (60 * 60 * 24);
-			if (timecalc != 0) {
+			if (timecalc != 0 && units++ < numberOfUnits) {
 				if (timecalc == 1) {
 					timeText += timecalc + TimeUtil.day + TimeUtil.seperator;
 				} else {
@@ -270,7 +275,7 @@ public class TimeUtil {
 		if (seconds % (60 * 60) >= 0) {
 			int timecalc = (int) Math.floor(seconds / (60 * 60));
 			seconds = seconds % (60 * 60);
-			if (timecalc != 0) {
+			if (timecalc != 0 && units++ < numberOfUnits) {
 				if (timecalc == 1) {
 					timeText += timecalc + TimeUtil.hour + TimeUtil.seperator;
 				} else {
@@ -282,7 +287,7 @@ public class TimeUtil {
 		if (seconds % 60 >= 0) {
 			int timecalc = (int) Math.floor(seconds / (60));
 			seconds = seconds % (60);
-			if (timecalc != 0) {
+			if (timecalc != 0 && units++ < numberOfUnits) {
 				if (timecalc == 1) {
 					timeText += timecalc + TimeUtil.minute + TimeUtil.seperator;
 				} else {
@@ -291,18 +296,19 @@ public class TimeUtil {
 			}
 		}
 		
-		if (seconds > 0) {
+		if (seconds > 0 && units++ < numberOfUnits) {
 			if (seconds == 1) {
 				timeText += seconds + TimeUtil.second + TimeUtil.seperator;
 			} else {
 				timeText += seconds + TimeUtil.seconds + TimeUtil.seperator;
 			}
 		}
+		
 		if (timeText.length() > 0) {
 			timeText = timeText.substring(0, timeText.length() - TimeUtil.seperator.length());
 			int lastSeperator = timeText.lastIndexOf(TimeUtil.seperator);
 			if (lastSeperator != -1) {
-				timeText = timeText.substring(0, lastSeperator) + TimeUtil.and + timeText.substring(lastSeperator + TimeUtil.seperator.length(), timeText.length());
+				timeText = timeText.substring(0, lastSeperator) + TimeUtil.and + timeText.substring(lastSeperator + TimeUtil.seperator.length());
 			}
 		} else {
 			timeText = "0" + TimeUtil.seconds;
