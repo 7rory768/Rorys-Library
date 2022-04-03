@@ -28,18 +28,17 @@ public class SkinUtil {
 	public static UUID getUUIDFromName(String name, boolean checkAPI) {
 		if (uuidCache.containsKey(name.toLowerCase())) return uuidCache.get(name.toLowerCase());
 		
-		UUID uuid = null;
 		OfflinePlayer player = Bukkit.getPlayer(name);
 		if (player != null) {
-			uuidCache.putIfAbsent(player.getName().toLowerCase(), uuid);
-			nameCache.putIfAbsent(uuid, player.getName());
+			uuidCache.putIfAbsent(player.getName().toLowerCase(), player.getUniqueId());
+			nameCache.putIfAbsent(player.getUniqueId(), player.getName());
 			return player.getUniqueId();
 		} else {
 			player = Bukkit.getOfflinePlayer(name);
 			
 			if (player.hasPlayedBefore()) {
-				uuidCache.putIfAbsent(player.getName().toLowerCase(), uuid);
-				nameCache.putIfAbsent(uuid, player.getName());
+				uuidCache.putIfAbsent(player.getName().toLowerCase(), player.getUniqueId());
+				nameCache.putIfAbsent(player.getUniqueId(), player.getName());
 				return player.getUniqueId();
 			}
 		}
@@ -52,13 +51,14 @@ public class SkinUtil {
 				
 				String uuidString = json.get("id").getAsString();
 				uuidString = uuidString.substring(0, 8) + "-" + uuidString.substring(8, 12) + "-" + uuidString.substring(12, 16) + "-" + uuidString.substring(16, 20) + "-" + uuidString.substring(20);
+				UUID uuid = UUID.fromString(uuidString);
 				
 				name = json.get("name").getAsString();
 				
 				uuidCache.put(name.toLowerCase(), uuid);
 				nameCache.put(uuid, name);
 				
-				return UUID.fromString(uuidString);
+				return uuid;
 			} catch (Exception e) {
 				//
 			}
