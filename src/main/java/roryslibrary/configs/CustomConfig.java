@@ -12,7 +12,7 @@ import java.io.*;
  */
 public class CustomConfig {
 
-    private final JavaPlugin plugin;
+    private JavaPlugin plugin;
     private final String fileName;
 
     private FileConfiguration config = null;
@@ -26,6 +26,11 @@ public class CustomConfig {
         } else {
             this.fileName = fileName;
         }
+    }
+    
+    public CustomConfig(File file) {
+        this.file = file;
+        this.fileName = file.getName();
     }
     
     public CustomConfig load() {

@@ -161,7 +161,7 @@ public abstract class MessagingUtil {
 		
 		String color = null;
 		StringBuilder builder = new StringBuilder();
-		for (String sentence : arg.split("\\n")) {
+		for (String sentence : arg.split("\n")) {
 			for (String word : sentence.split("\\s")) {
 				if (word.startsWith("§")) color = word.substring(0, 2);
 				else if (color != null) word = color + word;
