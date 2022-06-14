@@ -239,7 +239,7 @@ public abstract class MessagingUtil {
 		broadcastMessage(getString(path), placeholders);
 	}
 	
-	public String getProgressBar(double progress, double maxProgress, int progressBarCount, String completedColor, String missingColor, String progressBarChar) {
+	public static String getProgressBar(double progress, double maxProgress, int progressBarCount, String completedColor, String missingColor, String progressBarChar) {
 		int completedProgress = (int) Math.floor((progress / maxProgress) * progressBarCount);
 		completedProgress = completedProgress > progressBarCount ? progressBarCount : completedProgress;
 		int uncompletedProgress = progressBarCount - completedProgress;
@@ -256,6 +256,10 @@ public abstract class MessagingUtil {
 			}
 		}
 		return MessagingUtil.format(progressBar);
+	}
+	
+	public static String getProgressBar(double progress, double maxProgress, int progressBarCount) {
+		return getProgressBar(progress, maxProgress, progressBarCount, ChatColor.GREEN.toString(), ChatColor.RED.toString(), "⬛");
 	}
 	
 	public static String replacePlaceholders(String msg, String... placeholders) {
