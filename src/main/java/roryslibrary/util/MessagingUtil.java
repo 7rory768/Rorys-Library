@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.awt.*;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,6 +22,7 @@ public abstract class MessagingUtil {
 	@Getter
 	protected String rawPrefix, prefix = "", finalPrefixFormatting = "", finalColor, finalFormat, firstColor;
 	protected static Pattern HEX_PATTERN = Pattern.compile("#[A-Fa-f0-9]{6}");
+	protected static Pattern HEX_PATTERN_INCLUDING_SET = Pattern.compile("((?:#[A-Fa-f0-9]{6})|(§x(?:§[A-Fa-f0-9]){6}))+");
 	protected static boolean supportsHex;
 	
 	static {
@@ -120,6 +122,53 @@ public abstract class MessagingUtil {
 		}
 		
 		return firstColor;
+	}
+	
+	String getBrightestColor(String msg)
+	{
+		String  brightestColor    = "&f";
+		int     highestBrightness = -1;
+		Matcher matcher           = HEX_PATTERN_INCLUDING_SET.matcher(msg);
+		
+		while (matcher.find())
+		{
+			String string = matcher.group().replace("§x", "#").replace("§", "");
+			Color color      = ChatColor.of(string).getColor();
+			int   brightness = (int) (Math.max(color.getRed(), Math.max(color.getBlue(), color.getGreen())) / 2.55D);
+			
+			if (brightness > highestBrightness)
+			{
+				brightestColor = string;
+				highestBrightness = brightness;
+			}
+		}
+		
+		msg = matcher.replaceAll("");
+		
+		if (msg.length() > 1)
+		{
+			for (int index = 0; index < msg.length() - 1; index++)
+			{
+				String bit = msg.substring(index, index + 2);
+				if (bit.startsWith("§") || bit.startsWith("&"))
+				{
+					char chNum = bit.toLowerCase().charAt(1);
+					if (('a' <= chNum && chNum <= 'f' || '0' <= chNum && chNum <= '9' || chNum == 'r'))
+					{
+						Color color      = ChatColor.getByChar(chNum).getColor();
+						int   brightness = (int) (Math.max(color.getRed(), Math.max(color.getBlue(), color.getGreen())) / 2.55D);
+						
+						if (brightness > highestBrightness)
+						{
+							brightestColor = bit;
+							highestBrightness = brightness;
+						}
+					}
+				}
+			}
+		}
+		
+		return brightestColor;
 	}
 	
 	public static String getLastColor(String msg) {
