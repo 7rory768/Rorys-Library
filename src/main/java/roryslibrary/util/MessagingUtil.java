@@ -124,7 +124,7 @@ public abstract class MessagingUtil {
 		return firstColor;
 	}
 	
-	String getBrightestColor(String msg)
+	public static String getBrightestColor(String msg)
 	{
 		String  brightestColor    = "&f";
 		int     highestBrightness = -1;
