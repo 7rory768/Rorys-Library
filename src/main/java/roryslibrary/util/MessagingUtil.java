@@ -134,6 +134,8 @@ public abstract class MessagingUtil {
 		{
 			String string = matcher.group().replace("§x", "#").replace("§", "");
 			Color color      = ChatColor.of(string).getColor();
+			if (color == null) continue;
+			
 			int   brightness = (int) (Math.max(color.getRed(), Math.max(color.getBlue(), color.getGreen())) / 2.55D);
 			
 			if (brightness > highestBrightness)
@@ -153,9 +155,11 @@ public abstract class MessagingUtil {
 				if (bit.startsWith("§") || bit.startsWith("&"))
 				{
 					char chNum = bit.toLowerCase().charAt(1);
-					if (('a' <= chNum && chNum <= 'f' || '0' <= chNum && chNum <= '9' || chNum == 'r'))
+					if ('a' <= chNum && chNum <= 'f' || '0' <= chNum && chNum <= '9')
 					{
 						Color color      = ChatColor.getByChar(chNum).getColor();
+						if (color == null) continue;
+						
 						int   brightness = (int) (Math.max(color.getRed(), Math.max(color.getBlue(), color.getGreen())) / 2.55D);
 						
 						if (brightness > highestBrightness)
