@@ -10,6 +10,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import java.awt.*;
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -124,22 +125,19 @@ public abstract class MessagingUtil {
 		return firstColor;
 	}
 	
-	public static String getBrightestColor(String msg)
-	{
-		String  brightestColor    = "&f";
-		int     highestBrightness = -1;
-		Matcher matcher           = HEX_PATTERN_INCLUDING_SET.matcher(msg);
+	public static String getBrightestColor(String msg) {
+		String brightestColor = "&f";
+		int highestBrightness = -1;
+		Matcher matcher = HEX_PATTERN_INCLUDING_SET.matcher(msg);
 		
-		while (matcher.find())
-		{
+		while (matcher.find()) {
 			String string = matcher.group().replace("§x", "#").replace("§", "");
-			Color color      = ChatColor.of(string).getColor();
+			Color color = ChatColor.of(string).getColor();
 			if (color == null) continue;
 			
-			int   brightness = (int) (Math.max(color.getRed(), Math.max(color.getBlue(), color.getGreen())) / 2.55D);
+			int brightness = (int) (Math.max(color.getRed(), Math.max(color.getBlue(), color.getGreen())) / 2.55D);
 			
-			if (brightness > highestBrightness)
-			{
+			if (brightness > highestBrightness) {
 				brightestColor = string;
 				highestBrightness = brightness;
 			}
@@ -147,23 +145,18 @@ public abstract class MessagingUtil {
 		
 		msg = matcher.replaceAll("");
 		
-		if (msg.length() > 1)
-		{
-			for (int index = 0; index < msg.length() - 1; index++)
-			{
+		if (msg.length() > 1) {
+			for (int index = 0; index < msg.length() - 1; index++) {
 				String bit = msg.substring(index, index + 2);
-				if (bit.startsWith("§") || bit.startsWith("&"))
-				{
+				if (bit.startsWith("§") || bit.startsWith("&")) {
 					char chNum = bit.toLowerCase().charAt(1);
-					if ('a' <= chNum && chNum <= 'f' || '0' <= chNum && chNum <= '9')
-					{
-						Color color      = ChatColor.getByChar(chNum).getColor();
+					if ('a' <= chNum && chNum <= 'f' || '0' <= chNum && chNum <= '9') {
+						Color color = ChatColor.getByChar(chNum).getColor();
 						if (color == null) continue;
 						
-						int   brightness = (int) (Math.max(color.getRed(), Math.max(color.getBlue(), color.getGreen())) / 2.55D);
+						int brightness = (int) (Math.max(color.getRed(), Math.max(color.getBlue(), color.getGreen())) / 2.55D);
 						
-						if (brightness > highestBrightness)
-						{
+						if (brightness > highestBrightness) {
 							brightestColor = bit;
 							highestBrightness = brightness;
 						}
@@ -212,22 +205,37 @@ public abstract class MessagingUtil {
 	public static String makeSpigotSafe(String arg) {
 		arg = MessagingUtil.format(arg);
 		
-		String color = null;
-		StringBuilder builder = new StringBuilder();
+		StringBuilder lastColors = null;
+		StringJoiner joiner = new StringJoiner("\n");
+		
 		for (String sentence : arg.split("\n")) {
-			for (String word : sentence.split("\\s")) {
-				if (word.startsWith("§")) color = word.substring(0, 2);
-				else if (color != null) word = color + word;
-				
-				builder.append(word);
-				builder.append(" ");
+			if (lastColors != null) {
+				sentence = lastColors + sentence;
 			}
+			joiner.add(sentence);
 			
-			if (builder.length() > 0) builder.delete(builder.length() - 1, builder.length());
-			builder.append("\n");
+			lastColors = new StringBuilder(ChatColor.RESET.toString());
+			int length = sentence.length();
+			
+			for (int index = length - 1; index > -1; index--) {
+				char section = sentence.charAt(index);
+				
+				if (section == ChatColor.COLOR_CHAR && index < length - 1) {
+					char ch = sentence.charAt(index + 1);
+					ChatColor color = ChatColor.getByChar(ch);
+					
+					if (color != null) {
+						lastColors.insert(0, color);
+						
+						if (((int) ch >= 66 && (int) ch <= 97) || ((int) ch >= 48 && (int) ch <= 57) || color == ChatColor.RESET) {
+							break;
+						}
+					}
+				}
+			}
 		}
 		
-		return builder.length() > 0 ? builder.substring(0, builder.length() - 2) : builder.toString();
+		return joiner.toString();
 	}
 	
 	public String getString(String path) {
