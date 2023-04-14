@@ -227,15 +227,16 @@ public class ItemUtil {
 			// Attempt to get skin value instead
 		}
 		
-		boolean isURL = false;
+		/*boolean isURL = false;
 		try {
 			new URL(value);
 			isURL = true;
 		} catch (MalformedURLException var6) {
-		}
+		}*/
 		
 		GameProfile gameProfile = new GameProfile(UUID.randomUUID(), null);
-		gameProfile.getProperties().put("textures", new Property("textures", isURL ? SkinUtil.getSkinValue(value) : value));
+		gameProfile.getProperties().put("textures", new Property("textures", value));
+		//gameProfile.getProperties().put("textures", new Property("textures", isURL ? SkinUtil.getSkinValue(value) : value));
 		
 		SkullMeta skullMeta = (SkullMeta) itemMeta;
 		try {

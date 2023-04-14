@@ -4,9 +4,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -127,7 +124,8 @@ public class SkinUtil {
 		}
 	}
 	
-	public static String getSkinValue(String url) {
+	// No longer used, no need to shade JSoup otherwise
+	/*public static String getSkinValue(String url) {
 		url = url.toLowerCase();
 		
 		if (!skinCache.containsKey(url)) {
@@ -144,5 +142,5 @@ public class SkinUtil {
 		}
 		
 		return skinCache.get(url);
-	}
+	}*/
 }
