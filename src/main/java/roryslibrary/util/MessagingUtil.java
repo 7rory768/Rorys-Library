@@ -343,6 +343,8 @@ public abstract class MessagingUtil {
 	}
 	
 	public static String format(String msg, String... placeholders) {
+		msg = StringEscapeUtils.unescapeJava(ChatColor.translateAlternateColorCodes('&', replacePlaceholders(msg, placeholders)));
+		
 		if (supportsHex) {
 			Matcher matcher = HEX_PATTERN.matcher(msg);
 			
@@ -352,7 +354,7 @@ public abstract class MessagingUtil {
 			}
 		}
 		
-		return StringEscapeUtils.unescapeJava(ChatColor.translateAlternateColorCodes('&', replacePlaceholders(msg, placeholders)));
+		return msg;
 	}
 	
 	public static List<String> format(List<String> msg, String... placeholders) {
