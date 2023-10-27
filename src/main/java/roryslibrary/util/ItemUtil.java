@@ -234,7 +234,7 @@ public class ItemUtil {
 		} catch (MalformedURLException var6) {
 		}*/
 		
-		GameProfile gameProfile = new GameProfile(UUID.randomUUID(), null);
+		GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "");
 		gameProfile.getProperties().put("textures", new Property("textures", value));
 		//gameProfile.getProperties().put("textures", new Property("textures", isURL ? SkinUtil.getSkinValue(value) : value));
 		
