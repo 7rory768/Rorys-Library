@@ -126,6 +126,8 @@ public abstract class MessagingUtil {
 	}
 	
 	public static String getBrightestColor(String msg) {
+		if (!supportsHex) return getFirstColor(msg);
+		
 		String brightestColor = "&f";
 		int highestBrightness = -1;
 		Matcher matcher = HEX_PATTERN_INCLUDING_SET.matcher(msg);
