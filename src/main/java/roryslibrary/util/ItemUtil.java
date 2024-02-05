@@ -20,7 +20,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import roryslibrary.guis.GUIItem;
 
 import java.lang.reflect.Field;
-import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -214,37 +214,49 @@ public class ItemUtil {
 	}
 	
 	public static SkullMeta applyCustomHead(ItemMeta itemMeta, String value) {
-		try {
-			if (value.length() <= 16) {
-				SkullMeta skullMeta = (SkullMeta) itemMeta;
-				skullMeta.setOwner(value);
-				return skullMeta;
-			} else {
-				UUID uuid = UUID.fromString(value);
-				if (uuid != null) return applyCustomHead(itemMeta, uuid);
+		return applyCustomHead(itemMeta, value, value);
+	}
+	
+	public static SkullMeta applyCustomHead(ItemMeta itemMeta, String texturesURL, String value) {
+		boolean isURL = false;
+		URL url = null;
+		
+		// Textures url only supported in 1.19+
+		if (Version.isRunningMinimum(Version.v1_19)) {
+			try {
+				url = URI.create(texturesURL).toURL();
+				isURL = true;
+			} catch (Exception var8) {
 			}
-		} catch (Exception e) {
-			// Attempt to get skin value instead
 		}
 		
-		/*boolean isURL = false;
-		try {
-			new URL(value);
-			isURL = true;
-		} catch (MalformedURLException var6) {
-		}*/
-		
-		GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "");
-		gameProfile.getProperties().put("textures", new Property("textures", value));
-		//gameProfile.getProperties().put("textures", new Property("textures", isURL ? SkinUtil.getSkinValue(value) : value));
-		
 		SkullMeta skullMeta = (SkullMeta) itemMeta;
-		try {
-			Field profileField = skullMeta.getClass().getDeclaredField("profile");
-			profileField.setAccessible(true);
-			profileField.set(skullMeta, gameProfile);
-		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException exception) {
-			return null;
+		if (isURL && texturesURL.contains("textures.minecraft.net")) {
+			org.bukkit.profile.PlayerProfile playerProfile = Bukkit.createPlayerProfile(UUID.randomUUID());
+			playerProfile.getTextures().setSkin(url);
+			skullMeta.setOwnerProfile(playerProfile);
+		} else {
+			try {
+				if (value.length() <= 16) {
+					skullMeta.setOwner(value);
+					return skullMeta;
+				}
+				
+				UUID uuid = UUID.fromString(value);
+				return applyCustomHead(itemMeta, uuid);
+			} catch (Exception var9) {
+			}
+			
+			try {
+				GameProfile gameProfile = new GameProfile(UUID.randomUUID(), value);
+				gameProfile.getProperties().put("textures", new Property("textures", value));
+				
+				Field profileField = skullMeta.getClass().getDeclaredField("profile");
+				profileField.setAccessible(true);
+				profileField.set(skullMeta, gameProfile);
+			} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException var7) {
+				return null;
+			}
 		}
 		
 		return skullMeta;
