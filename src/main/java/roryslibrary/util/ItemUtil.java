@@ -248,7 +248,7 @@ public class ItemUtil {
 			}
 			
 			try {
-				GameProfile gameProfile = new GameProfile(UUID.randomUUID(), value);
+				GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "");
 				gameProfile.getProperties().put("textures", new Property("textures", value));
 				
 				Field profileField = skullMeta.getClass().getDeclaredField("profile");
