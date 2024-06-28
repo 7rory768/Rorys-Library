@@ -304,21 +304,21 @@ public abstract class MessagingUtil {
 	
 	public static String getProgressBar(double progress, double maxProgress, int progressBarCount, String completedColor, String missingColor, String progressBarChar) {
 		int completedProgress = (int) Math.floor((progress / maxProgress) * progressBarCount);
-		completedProgress = completedProgress > progressBarCount ? progressBarCount : completedProgress;
+		completedProgress = Math.min(completedProgress, progressBarCount);
 		int uncompletedProgress = progressBarCount - completedProgress;
 		
-		String progressBar = completedColor;
+		StringBuilder progressBar = new StringBuilder(completedColor);
 		for (int i = 0; i < completedProgress; i++) {
-			progressBar += progressBarChar;
+			progressBar.append(progressBarChar);
 		}
 		
 		if (uncompletedProgress > 0) {
-			progressBar += missingColor;
+			progressBar.append(missingColor);
 			for (int i = 0; i < uncompletedProgress; i++) {
-				progressBar += progressBarChar;
+				progressBar.append(progressBarChar);
 			}
 		}
-		return MessagingUtil.format(progressBar);
+		return MessagingUtil.format(progressBar.toString());
 	}
 	
 	public static String getProgressBar(double progress, double maxProgress, int progressBarCount) {
