@@ -16,7 +16,8 @@ public enum Version {
 	v1_17("1.17", 17, "v1_17_1"),
 	v1_18("1.18", 18, "v1_18"),
 	v1_19("1.19", 19, "v1_19"),
-	v1_20("1.20", 20, "v1_20");
+	v1_20("1.20", 20, "v1_20"),
+	v1_21("1.21", 21, "v1_21");
 	
 	public final String name;
 	public final int weight;
