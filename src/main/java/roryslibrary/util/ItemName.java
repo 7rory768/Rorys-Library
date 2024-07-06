@@ -1,6 +1,5 @@
 package roryslibrary.util;
 
-import org.apache.commons.lang.WordUtils;
 import org.bukkit.Material;
 
 public enum ItemName {
@@ -364,19 +363,30 @@ public enum ItemName {
 		}
 		return null;
 	}
-	
+
 	public String toString() {
 		return name;
 	}
-	
+
 	//Returns the item name with the first letter uppercased (Example: pressure plate -> Pressure plate)
 	public String firstUpperCased() {
 		return Character.toUpperCase(name.charAt(0)) + name.substring(1);
 	}
-	
+
 	//Returns the item name with all the words with the first letter uppercased (Example: pressure plate -> Pressure Plate)
 	public String firstAllUpperCased() {
-		return WordUtils.capitalizeFully(name);
+		StringBuilder result    = new StringBuilder();
+		char[]        charArray = name.toLowerCase().toCharArray();
+		for (int i = 0; i < charArray.length; i++) {
+			Character previous = i > 0 ? charArray[i - 1] : null;
+			char      c        = charArray[i];
+			if (previous == null || previous == ' ')
+			{
+				c = Character.toUpperCase(c);
+			}
+			result.append(c);
+		}
+		return result.toString();
 	}
 	
 	//Returns the item name with all the letters uppercased (Example: pressure plate -> PRESSURE PLATE)
