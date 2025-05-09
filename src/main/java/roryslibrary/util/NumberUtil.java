@@ -52,9 +52,25 @@ public class NumberUtil {
 		return hasDecimal ? NumberUtil.setMaxDecimals((truncated / 10d), places) + suffix : NumberUtil.setMaxDecimals((truncated / 10), places) + suffix;
 	}
 	
-	public static String getCommaString(long number) {
+	public static String getCommaString(double number, int maxDecimals)
+	{
+		String commaString = setMaxDecimals(number, maxDecimals);
+		int end = commaString.indexOf(".");
+		if (end == -1) end = commaString.length();
+		
+		for (int i = end - 3; i > 0; i = i - 3)
+		{
+			commaString = commaString.substring(0, i) + "," + commaString.substring(i);
+		}
+		
+		return commaString;
+	}
+	
+	public static String getCommaString(long number)
+	{
 		String commaString = "" + number;
-		for (int i = commaString.length() - 3; i > 0; i = i - 3) {
+		for (int i = commaString.length() - 3; i > 0; i = i - 3)
+		{
 			commaString = commaString.substring(0, i) + "," + commaString.substring(i);
 		}
 		
