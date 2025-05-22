@@ -1,5 +1,6 @@
 package roryslibrary.configs;
 
+import lombok.Getter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -10,6 +11,7 @@ import java.io.*;
 /**
  * Created by Rory on 6/18/2017.
  */
+@Getter
 public class CustomConfig {
 
     private JavaPlugin plugin;
