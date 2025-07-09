@@ -66,6 +66,11 @@ public class NumberUtil {
 		return commaString;
 	}
 	
+	public static String getCommaString(double number)
+	{
+		return getCommaString(number, 2);
+	}
+	
 	public static String getCommaString(long number)
 	{
 		String commaString = "" + number;
@@ -183,15 +188,32 @@ public class NumberUtil {
 		return newBeforeDot;
 	}
 	
-	public static String setMaxDecimals(double arg, int places) {
-		if (places == 0) {
+	public static String setMaxDecimals(double arg, int places)
+	{
+		if (places == 0)
+		{
 			String str = String.valueOf(arg);
-			return str.substring(0, str.indexOf("."));
+			int eIndex = str.indexOf("E");
+			
+			if (eIndex != -1)
+			{
+				int eValue = Integer.valueOf(str.substring(eIndex + 1, str.length()));
+				return str.substring(0, eValue + 1 + str.indexOf(".")).replace(".", "");
+			}
+			else
+				return str.substring(0, str.indexOf("."));
 		}
 		
-		String suffix = "";
-		for (int i = 0; i < places; i++) {
-			suffix += "#";
+		long wholeArg = (long) arg;
+		if (wholeArg == arg)
+		{
+			return String.valueOf(wholeArg);
+		}
+		
+		StringBuilder suffix = new StringBuilder();
+		for (int i = 0; i < places; i++)
+		{
+			suffix.append("#");
 		}
 		DecimalFormat decimalFormat = new DecimalFormat("0." + suffix);
 		return decimalFormat.format(arg);
