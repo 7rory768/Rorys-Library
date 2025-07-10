@@ -1,7 +1,7 @@
 package roryslibrary.util;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
+import java.math.RoundingMode;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
@@ -10,8 +10,8 @@ public class NumberUtil {
 	
 	private static String[] suffixes = new String[]{"th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th"};
 	
-    private static final NavigableMap<Double, String> moneySuffixes = new TreeMap<>();
-    private static final NavigableMap<String, Double> moneySuffixesReversed = new TreeMap<>();
+	private static final NavigableMap<Double, String> moneySuffixes = new TreeMap<>();
+	private static final NavigableMap<String, Double> moneySuffixesReversed = new TreeMap<>();
 	
 	static {
 		moneySuffixes.put(1_000d, "k");
@@ -22,15 +22,15 @@ public class NumberUtil {
 		moneySuffixes.put(1_000_000_000_000_000_000d, "P");
 		moneySuffixes.put(1_000_000_000_000_000_000_000d, "E");
 		moneySuffixes.put(1_000_000_000_000_000_000_000_000d, "Z");
-        
-        moneySuffixesReversed.put("k", 1_000d);
-        moneySuffixesReversed.put("M", 1_000_000d);
-        moneySuffixesReversed.put("B", 1_000_000_000d);
-        moneySuffixesReversed.put("T", 1_000_000_000_000d);
-        moneySuffixesReversed.put("Q", 1_000_000_000_000_000d);
-        moneySuffixesReversed.put("P", 1_000_000_000_000_000_000d);
-        moneySuffixesReversed.put("E", 1_000_000_000_000_000_000_000d);
-        moneySuffixesReversed.put("Z", 1_000_000_000_000_000_000_000_000d);
+		
+		moneySuffixesReversed.put("k", 1_000d);
+		moneySuffixesReversed.put("M", 1_000_000d);
+		moneySuffixesReversed.put("B", 1_000_000_000d);
+		moneySuffixesReversed.put("T", 1_000_000_000_000d);
+		moneySuffixesReversed.put("Q", 1_000_000_000_000_000d);
+		moneySuffixesReversed.put("P", 1_000_000_000_000_000_000d);
+		moneySuffixesReversed.put("E", 1_000_000_000_000_000_000_000d);
+		moneySuffixesReversed.put("Z", 1_000_000_000_000_000_000_000_000d);
 	}
 	
 	public static String beautify(double value) {
@@ -52,30 +52,25 @@ public class NumberUtil {
 		return hasDecimal ? NumberUtil.setMaxDecimals((truncated / 10d), places) + suffix : NumberUtil.setMaxDecimals((truncated / 10), places) + suffix;
 	}
 	
-	public static String getCommaString(double number, int maxDecimals)
-	{
+	public static String getCommaString(double number, int maxDecimals) {
 		String commaString = setMaxDecimals(number, maxDecimals);
 		int end = commaString.indexOf(".");
 		if (end == -1) end = commaString.length();
 		
-		for (int i = end - 3; i > 0; i = i - 3)
-		{
+		for (int i = end - 3; i > 0; i = i - 3) {
 			commaString = commaString.substring(0, i) + "," + commaString.substring(i);
 		}
 		
 		return commaString;
 	}
 	
-	public static String getCommaString(double number)
-	{
+	public static String getCommaString(double number) {
 		return getCommaString(number, 2);
 	}
 	
-	public static String getCommaString(long number)
-	{
+	public static String getCommaString(long number) {
 		String commaString = "" + number;
-		for (int i = commaString.length() - 3; i > 0; i = i - 3)
-		{
+		for (int i = commaString.length() - 3; i > 0; i = i - 3) {
 			commaString = commaString.substring(0, i) + "," + commaString.substring(i);
 		}
 		
@@ -188,35 +183,19 @@ public class NumberUtil {
 		return newBeforeDot;
 	}
 	
-	public static String setMaxDecimals(double arg, int places)
-	{
-		if (places == 0)
-		{
-			String str = String.valueOf(arg);
-			int eIndex = str.indexOf("E");
-			
-			if (eIndex != -1)
-			{
-				int eValue = Integer.valueOf(str.substring(eIndex + 1, str.length()));
-				return str.substring(0, eValue + 1 + str.indexOf(".")).replace(".", "");
-			}
-			else
-				return str.substring(0, str.indexOf("."));
+	public static String setMaxDecimals(double arg, int places) {
+		BigDecimal bd = BigDecimal.valueOf(arg);
+		
+		if (places == 0) {
+			return bd.setScale(0, RoundingMode.DOWN).toPlainString();
 		}
 		
-		long wholeArg = (long) arg;
-		if (wholeArg == arg)
-		{
-			return String.valueOf(wholeArg);
+		if (bd.scale() <= 0 || bd.stripTrailingZeros().scale() <= 0) {
+			return bd.setScale(0, RoundingMode.DOWN).toPlainString();
 		}
 		
-		StringBuilder suffix = new StringBuilder();
-		for (int i = 0; i < places; i++)
-		{
-			suffix.append("#");
-		}
-		DecimalFormat decimalFormat = new DecimalFormat("0." + suffix);
-		return decimalFormat.format(arg);
+		bd = bd.setScale(places, RoundingMode.DOWN);
+		return bd.stripTrailingZeros().toPlainString();
 	}
 	
 	public static String ordinal(int i) {
@@ -231,31 +210,25 @@ public class NumberUtil {
 		}
 	}
 	
-	public static boolean isValidMoneyString(String arg)
-	{
+	public static boolean isValidMoneyString(String arg) {
 		arg = arg.toLowerCase();
 		
 		int index = 0;
-		while (!arg.equals("") && index < arg.length())
-		{
+		while (!arg.equals("") && index < arg.length()) {
 			
 			char ch = arg.charAt(index);
 			
-			if (ch == '.')
-			{
+			if (ch == '.') {
 				if (index == arg.length() - 1) return false;
 				ch = arg.charAt(++index);
 			}
 			
-			if (ch == 'k' || ch == 'm' || ch == 'b' || ch == 't' || ch == 'q' || ch == 'p' || ch == 'e' || ch == 'z')
-			{
+			if (ch == 'k' || ch == 'm' || ch == 'b' || ch == 't' || ch == 'q' || ch == 'p' || ch == 'e' || ch == 'z') {
 				arg = arg.substring(index + 1);
 				index = 0;
-			} else if (!NumberUtil.isDouble("" + ch))
-			{
+			} else if (!NumberUtil.isDouble("" + ch)) {
 				return false;
-			} else
-			{
+			} else {
 				index++;
 			}
 			
@@ -264,38 +237,31 @@ public class NumberUtil {
 		return arg.length() == 0;
 	}
 	
-	public static double parseValue(String arg)
-	{
+	public static double parseValue(String arg) {
 		arg = arg.toUpperCase();
 		
 		double value = 0;
 		
 		int index = 0;
-		while (!arg.equals("") && index < arg.length())
-		{
+		while (!arg.equals("") && index < arg.length()) {
 			char ch = arg.charAt(index);
 			
-			if (ch == '.')
-			{
+			if (ch == '.') {
 				if (index == arg.length() - 1) return -1;
 				ch = arg.charAt(++index);
 			}
 			
-			if (ch == 'K')
-			{
+			if (ch == 'K') {
 				value += new BigDecimal(Double.parseDouble(arg.substring(0, index))).multiply(new BigDecimal(moneySuffixesReversed.get("k"))).doubleValue();
 				arg = arg.substring(index + 1);
 				index = 0;
-			} else if (ch == 'M' || ch == 'B' || ch == 'T' || ch == 'Q' || ch == 'P' || ch == 'E' || ch == 'Z')
-			{
+			} else if (ch == 'M' || ch == 'B' || ch == 'T' || ch == 'Q' || ch == 'P' || ch == 'E' || ch == 'Z') {
 				value += new BigDecimal(Double.parseDouble(arg.substring(0, index))).multiply(new BigDecimal(moneySuffixesReversed.get(String.valueOf(ch)))).doubleValue();
 				arg = arg.substring(index + 1);
 				index = 0;
-			} else if (!NumberUtil.isInt("" + ch))
-			{
+			} else if (!NumberUtil.isInt("" + ch)) {
 				return -1;
-			} else
-			{
+			} else {
 				index++;
 			}
 		}
