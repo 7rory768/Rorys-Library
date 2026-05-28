@@ -1,7 +1,9 @@
 package roryslibrary.util;
 
+import lombok.Getter;
 import org.bukkit.Bukkit;
 
+@Getter
 public enum Version {
 	
 	v1_8("1.8", 8, ""),
@@ -17,7 +19,8 @@ public enum Version {
 	v1_18("1.18", 18, "v1_18"),
 	v1_19("1.19", 19, "v1_19"),
 	v1_20("1.20", 20, "v1_20"),
-	v1_21("1.21", 21, "v1_21");
+	v1_21("1.21", 21, "v1_21"),
+	v26("26", 22, "v26");
 	
 	public final String name;
 	public final int weight;
@@ -30,25 +33,13 @@ public enum Version {
 		this.abstractName = abstractName;
 	}
 	
-	public String getName() {
-		return name;
-	}
-	
-	public int getWeight() {
-		return weight;
-	}
-	
-	public String getAbstractName() {
-		return abstractName;
-	}
-	
 	public static Version getByName(String name) {
 		for (Version version : values()) {
 			if (name.startsWith(version.name)) {
 				return version;
 			}
 		}
-		return Version.v1_19;
+		return Version.values()[Version.values().length - 1];
 	}
 	
 	public static Version getVersion() {
